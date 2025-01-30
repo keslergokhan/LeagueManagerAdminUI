@@ -1,7 +1,11 @@
+import { DefaultLayout } from "../layouts/defaultLayout"
+
 export const HomePage = ():JSX.Element =>{
     return (
         <>
-            Anasayfa
+            <DefaultLayout>
+                anasayfa
+            </DefaultLayout>
         </>
     )
 }

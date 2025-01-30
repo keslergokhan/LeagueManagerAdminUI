@@ -10,7 +10,7 @@ export interface IResultDataControl<T> extends IResultControl{
     SetSuccessData(data:T):IResultDataControl<T>;
 }
 
-export abstract class BaseResultControl implements IResultControl{
+export abstract class ResultControlBase implements IResultControl{
     public isSuccess:boolean;
     /**
      *

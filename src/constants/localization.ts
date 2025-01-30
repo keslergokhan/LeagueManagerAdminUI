@@ -4,13 +4,13 @@ class Localization {
     
 
     /** Lütfen boş geçmeyiniz. */
-    public pleasedonotempty = new LocalizationItem("Please do not leave it blank.");
+    public pleasedonotempty = new LocalizationItem("Lütfen boş geçmeyiniz.");
     /** İçerik {value} karakteri aşmamalıdır. */
-    public maxChar=new LocalizationItem("The content must not exceed {value} characters.");
+    public maxChar=new LocalizationItem("İçerik {value} karakteri aşmamalıdır.");
     /** Lütfen geçerli e-posta adresi giriniz */
-    public emailNotFormat = new LocalizationItem("Please enter valid email address");
+    public emailNotFormat = new LocalizationItem("Lütfen geçerli e-posta adresi giriniz. ");
     /** Kullanıcı bilgileri yanlış olabilir, lütfen tekrar deneyin */
-    public errorUserAndPassword = new LocalizationItem("User information may be incorrect, please try again")
+    public errorUserAndPassword = new LocalizationItem("Kullanıcı bilgileri yanlış olabilir, lütfen tekrar deneyin.")
     
 }
 

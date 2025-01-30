@@ -78,9 +78,9 @@ export const SignInLayer = ():JSX.Element => {
                         <Link to="/" className="mb-40 max-w-290-px">
                             <img src="assets/images/logo.png" alt="" />
                         </Link>
-                        <h4 className="mb-12">Sign In to your Account</h4>
+                        <h4 className="mb-12">Lig Yönetim Paneli</h4>
                         <p className="mb-32 text-secondary-light text-lg">
-                            Welcome back! please enter your detail
+                        Tekrar hoş geldiniz! Lütfen bilgilerinizi giriniz.
                         </p>
                     </div>
                     
@@ -131,7 +131,7 @@ export const SignInLayer = ():JSX.Element => {
                                 <ErrorMessage name="password" component="span" className="text-danger" />
                             </div>
                             
-                            <div className="">
+                            <div className="" hidden>
                                 <div className="d-flex justify-content-between gap-2">
                                     <div className="form-check style-check d-flex align-items-center">
                                     
@@ -156,7 +156,7 @@ export const SignInLayer = ():JSX.Element => {
                                 className="btn btn-primary text-sm btn-sm px-12 py-16 w-100 radius-12 mt-32"
                             >
                                 {" "}
-                                Sign In {useSpinnerHtml}
+                                Giriş {useSpinnerHtml}
                             </button>
                             
                        </Form>

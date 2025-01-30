@@ -1,6 +1,10 @@
 import axios from "axios"
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { IResultDataControl } from "../commons/base/baseResultControl";
+import { useLocation, useNavigate } from "react-router-dom";
+import { GetJwtTokenResModel } from "../models/auths/getJwtTokenResModel";
+import { AuthService } from "../services/authService";
+import { PageRoutes } from "../constants/pageRoute";
 
 export interface UseAuthRes {
     id:string;
@@ -13,7 +17,6 @@ export interface UseAuthRes {
 
 export const useAuth = ():IResultDataControl<UseAuthRes> | undefined =>{
     const [useAuth,setAuth] = useState<IResultDataControl<UseAuthRes>>();
-    /*
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -21,7 +24,7 @@ export const useAuth = ():IResultDataControl<UseAuthRes> | undefined =>{
         const fetch = async () =>{
             const url = `${import.meta.env.VITE_CMS_API_URL}${import.meta.env.VITE_CMS_API_AUTH_VALID}`;
             
-            const getLocalJwt:IResultDataControl<GetJwtTokenRes> = AuthService.GetLocalJwt();
+            const getLocalJwt:IResultDataControl<GetJwtTokenResModel> = AuthService.GetLocalJwt();
             if(getLocalJwt.isSuccess){
                 let result = null;
                 
@@ -55,7 +58,6 @@ export const useAuth = ():IResultDataControl<UseAuthRes> | undefined =>{
         }
         fetch();
     },[]);
-    */
     return useAuth;
     
 }

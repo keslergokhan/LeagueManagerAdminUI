@@ -1,12 +1,12 @@
-import { BaseResultControl,IResultDataControl } from "../base/baseResultControl";
+import { ResultControlBase,IResultDataControl } from "../base/baseResultControl";
 
 
-export class ResultControl extends BaseResultControl{
+export class ResultControl extends ResultControlBase{
 
     
 }
 
-export class ResultDataControl<T extends any> extends BaseResultControl implements IResultDataControl<T>
+export class ResultDataControl<T extends any> extends ResultControlBase implements IResultDataControl<T>
 {
     public data:T;
     public SetData(data:T):IResultDataControl<T>{
