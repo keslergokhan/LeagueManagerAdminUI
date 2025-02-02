@@ -16,8 +16,15 @@ export const BlogPage = ():JSX.Element=>{
 
     const blogService = new BlogService();
 
+    const [blogValue,setBlogValue] = useState<WriteBlogDto>({
+        title:"",
+        content:"",
+        blogDate:new Date(),
+        blogImage:"",
+        state:0
+    });
+    
     const [CkEdtorHelper,CkEdtor] = CkEditorField({name:"content",id:"content",data:""});
-
     const dynamicTable:DynamicTableProp<ReadBlogDto,WriteBlogDto> =
     {
         AddFormHtml:()=>{
@@ -36,7 +43,7 @@ export const BlogPage = ():JSX.Element=>{
                     </div>
                     <div>
                         <label>İçerik</label>
-                        <CkEdtor></CkEdtor>
+                        <CkEdtor data={""}></CkEdtor>
                         <ErrorMessage name="content" component="span" className="text-danger"></ErrorMessage>
                     </div>
                     
@@ -48,8 +55,7 @@ export const BlogPage = ():JSX.Element=>{
             )
         },
         AddFormSubmitHandlerAsync:async(values:WriteBlogDto)=>{
-            console.log(values)
-            console.log(CkEdtorHelper.current.setData(""));
+            CkEdtorHelper.current.setData("");
             await blogService.AddAsync(values);
         },
         DeleteHandlerAsync:async(event:React.MouseEvent<HTMLButtonElement>,data:ReadBlogDto)=>{
@@ -59,13 +65,7 @@ export const BlogPage = ():JSX.Element=>{
             console.log(values);
         },
         GetDataServiceAsync:blogService.GetAllAsync,
-        InitialValues:{
-            title:"",
-            content:"",
-            blogDate:new Date(),
-            blogImage:"",
-            state:0
-        },
+        InitialValues:blogValue,
         TableHeadHtml:(
             <>
                 <TableCell>Başlık</TableCell>
@@ -82,12 +82,13 @@ export const BlogPage = ():JSX.Element=>{
         ),
         Title:"Blog",
         UpdateHtml:(event:React.MouseEvent<HTMLButtonElement>,data:WriteBlogDto):JSX.Element=>{
-          
+            setBlogValue(data);
+            
             return (<>
                     <div>
                         <label>Başlık</label>
                         <Field className="form-control" tpye="text" id="title" name="title" ></Field>
-                        <ErrorMessage name="title" component="span" className="text-danger"></ErrorMessage>
+                        <ErrorMessage name="title" component="span" className="text-danger" ></ErrorMessage>
                     </div>
                     <div>
                         <label>Resim</label>
@@ -96,13 +97,13 @@ export const BlogPage = ():JSX.Element=>{
                     </div>
                     <div>
                         <label>İçerik</label>
-                        <CkEdtor></CkEdtor>
+                        <CkEdtor data={data.content}></CkEdtor>
                         <ErrorMessage name="content" component="span" className="text-danger"></ErrorMessage>
                     </div>
                     
                     <div >
                         <label>Tarih</label>
-                        <FormikDateField name="blogDate" id="blogDate" ></FormikDateField>
+                        <FormikDateField name="blogDate" id="blogDate" value={data.blogDate.toString().split('T')[0]} ></FormikDateField>
                     </div>
             </>)
         },

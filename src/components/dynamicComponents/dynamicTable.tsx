@@ -39,6 +39,7 @@ export interface DynamicTableProp<TResposne,TRequest> {
      */
     UpdateHtml:(event:React.MouseEvent<HTMLButtonElement>,data:TResposne)=>JSX.Element;
     UpdateFormSubmitHandlerAsync:(values:TRequest | any)=>Promise<any>;
+    UpdateFormHtmlAfterHandlerAsync?:(values:TRequest | any)=>Promise<void>;
     /**
      * Tabloda silme işlemi tetiklendiğinde çalıştırılacak method
      * @param event 
@@ -100,6 +101,9 @@ export const DynamicTable = (props:DynamicTableProp<any,any>):JSX.Element => {
         setUpdateButtonShow(false);
         setAddButtonShow(false);
         setUpdateHtml(props.UpdateHtml(event,data));
+        if(props.UpdateFormHtmlAfterHandlerAsync){
+            props.UpdateFormHtmlAfterHandlerAsync(data);
+        }
     }
 
     const deleteButtonClickHandlerAsync = async (event:React.MouseEvent<HTMLButtonElement>,data:any) =>{
@@ -204,49 +208,50 @@ export const DynamicTable = (props:DynamicTableProp<any,any>):JSX.Element => {
                     {(updateHtmlShow?UpdateHtml():"")}
                     {(addHtmlShow?AddHtml():"")}
                     
-
-                    <TableContainer>
-                        <Stack direction="row" alignItems="center"  justifyContent={"space-between"}>
-                            <Typography> {props.Title} </Typography>
-                            <Stack direction="row" spacing={2}>
-                                {
-                                    dataLoading<=30?(<Button variant="contained" size="small" color="primary" onClick={()=>{GetDataServiceAsyncHandlerAsync()}} ><Icon icon="material-symbols:refresh" width="24" height="24"  style={{color: "#fff"}} /></Button>):("")
-                                }
+                    <CmsCardBody xlCol={12} xxlCol={12}>
+                        <TableContainer>
+                            <Stack direction="row" alignItems="center"  justifyContent={"space-between"}>
+                                <Typography> {props.Title} </Typography>
+                                <Stack direction="row" spacing={2}>
+                                    {
+                                        dataLoading<=30?(<Button variant="contained" size="small" color="primary" onClick={()=>{GetDataServiceAsyncHandlerAsync()}} ><Icon icon="material-symbols:refresh" width="24" height="24"  style={{color: "#fff"}} /></Button>):("")
+                                    }
+                                    
+                                    {
+                                        addButtonShow ? (<Button variant="contained" size="small" color="success" onClick={addButtonClickHandler} endIcon={<Icon icon="akar-icons:pencil" width="24" height="24"  />}>Add New</Button>):""
+                                    }
+                                </Stack>
                                 
-                                {
-                                    addButtonShow ? (<Button variant="contained" size="small" color="success" onClick={addButtonClickHandler} endIcon={<Icon icon="akar-icons:pencil" width="24" height="24"  />}>Add New</Button>):""
-                                }
                             </Stack>
-                            
-                        </Stack>
-                        <Table>
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell>COUNT</TableCell>
-                                    {props.TableHeadHtml}
-                                    <TableCell align="right">ACTION</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {
-                                    data.current.map((x,i)=>(
-                                        <TableRow key={i}>
-                                            <TableCell>{rowCount+i}</TableCell>
-                                            {props.TableRow(x)}
-                                            <TableCell align="right">
-                                                <Stack direction="row-reverse" spacing={2}  alignItems="flex-end">
-                                                    {
-                                                        updateButtonShow ? (<Button variant="outlined" size="small"  onClick={(e)=>updateButtonClickHandler(e,x)} endIcon={<Icon icon="akar-icons:pencil" width="24" height="24"  />}>Update</Button>):""
-                                                    }
-                                                    <Button variant="outlined" size="small"  onClick={async (e)=>await deleteButtonClickHandlerAsync(e,x)}  color="error"  endIcon={<Icon icon="weui:delete-filled" width="24" height="24"  style={{color: "error"}} />}>Delete</Button>
-                                                </Stack>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))
-                                }
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
+                            <Table>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>COUNT</TableCell>
+                                        {props.TableHeadHtml}
+                                        <TableCell align="right">ACTION</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {
+                                        data.current.map((x,i)=>(
+                                            <TableRow key={i}>
+                                                <TableCell>{rowCount+i}</TableCell>
+                                                {props.TableRow(x)}
+                                                <TableCell align="right">
+                                                    <Stack direction="row-reverse" spacing={2}  alignItems="flex-end">
+                                                        {
+                                                            updateButtonShow ? (<Button variant="outlined" size="small"  onClick={(e)=>updateButtonClickHandler(e,x)} endIcon={<Icon icon="akar-icons:pencil" width="24" height="24"  />}>Update</Button>):""
+                                                        }
+                                                        <Button variant="outlined" size="small"  onClick={async (e)=>await deleteButtonClickHandlerAsync(e,x)}  color="error"  endIcon={<Icon icon="weui:delete-filled" width="24" height="24"  style={{color: "error"}} />}>Delete</Button>
+                                                    </Stack>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))
+                                    }
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    </CmsCardBody>
                 </>
                 
             ):(

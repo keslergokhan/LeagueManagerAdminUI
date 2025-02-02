@@ -73,13 +73,16 @@ interface CkEditorFieldProp {
     data:string
 }
 
+interface CkIn {
+    data:string
+}
 
-export const CkEditorField = (props:CkEditorFieldProp):[editor:React.MutableRefObject<ClassicEditor> ,CkEditorJsxHandler:()=>JSX.Element] =>{
+
+export const CkEditorField = (props:CkEditorFieldProp):[editor:React.MutableRefObject<ClassicEditor> ,CkEditorJsxHandler:(data:CkIn)=>JSX.Element] =>{
     
     const editorInfo = useRef<ClassicEditor|any>();
-    const editorRef = useRef(null);
 
-    const CkEditorJsxHandler = ():JSX.Element=>{
+    const CkEditorJsxHandler = (data:CkIn):JSX.Element=>{
         const [field, meta, helpers] = useField(props);
 
         const handleEditorChange = (e: EventInfo, editor: ClassicEditor): void => {
@@ -92,7 +95,7 @@ export const CkEditorField = (props:CkEditorFieldProp):[editor:React.MutableRefO
                 editor={ClassicEditor}
                 config={config}
                 onChange={handleEditorChange}
-                onReady={(editor) => {editorInfo.current = editor}}
+                onReady={(editor) => {editorInfo.current = editor;editor.setData(data.data)}}
                 id={props.id}
             />
             <input className="form-control" {...props} {...field} type='text' hidden></input>
