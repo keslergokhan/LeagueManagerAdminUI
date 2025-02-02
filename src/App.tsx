@@ -3,6 +3,8 @@ import { BrowserRouter,Routes,Route } from 'react-router-dom'
 import { SignInLayer } from './components/signInComponents/signInLayer'
 import { HomePage } from './pages/homePage'
 import { BlogPage } from './pages/blogPage'
+import { ToastContainer } from 'react-toastify'
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
 
@@ -16,6 +18,7 @@ function App() {
           <Route path="/home" element={<HomePage></HomePage>}></Route>
           <Route path='/blog' element={<BlogPage></BlogPage>}></Route>
         </Routes>
+        <ToastContainer></ToastContainer>
       </BrowserRouter>
     </>
   )

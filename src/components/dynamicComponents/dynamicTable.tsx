@@ -15,7 +15,7 @@ import { useEffect, useRef, useState } from 'react';
 import { CmsCardBody } from '../shareds/cmsCardBody';
 import { ToastHelper } from '../../commons/helpers/toastHelpers';
 import { IResultDataControl } from '../../commons/base/baseResultControl';
-import { Formik,Form,FormikState } from 'formik';
+import { Formik,Form,FormikState, useFormik, FormikProps } from 'formik';
 import * as Yup from 'yup';
 import { toast } from 'react-toastify';
 
@@ -30,7 +30,7 @@ export interface DynamicTableProp<TResposne,TRequest> {
     /**
      * Yeni bir kayıt ekle buttonuna basıldığında aktif olacak html/form tasarımı.
      */
-    AddFormHtml:JSX.Element;
+    AddFormHtml:()=>JSX.Element;
     AddFormSubmitHandlerAsync:(values:TRequest | any)=>Promise<any>;
     /**
      * Tablo içerisinde güncelleme işlemi sonrası aktif olacak html/form tasarımı.
@@ -38,6 +38,7 @@ export interface DynamicTableProp<TResposne,TRequest> {
      * @returns 
      */
     UpdateHtml:(event:React.MouseEvent<HTMLButtonElement>,data:TResposne)=>JSX.Element;
+    UpdateFormSubmitHandlerAsync:(values:TRequest | any)=>Promise<any>;
     /**
      * Tabloda silme işlemi tetiklendiğinde çalıştırılacak method
      * @param event 
@@ -48,7 +49,7 @@ export interface DynamicTableProp<TResposne,TRequest> {
     /**
      * Tablonun header alanı
      */
-    TableHead:JSX.Element;
+    TableHeadHtml:JSX.Element;
     /**
      * Tablonun oluşturulacak satır içeriği
      * @param data Satır kayıtları
@@ -68,6 +69,7 @@ export const DynamicTable = (props:DynamicTableProp<any,any>):JSX.Element => {
     const [updateButtonShow,setUpdateButtonShow] = useState<boolean>(true);
     const [addButtonShow,setAddButtonShow] = useState<boolean>(true);
     const [dataLoading,setDataLoading] = useState<number>(0);
+    const updateFormik = useRef<FormikProps<any>>(null);
 
     const data = useRef(new Array<any>);
 
@@ -101,11 +103,17 @@ export const DynamicTable = (props:DynamicTableProp<any,any>):JSX.Element => {
     }
 
     const deleteButtonClickHandlerAsync = async (event:React.MouseEvent<HTMLButtonElement>,data:any) =>{
-        ToastHelper.YesNoToast({content:(<>Are you sure you want to delete ?</>),yesHandlerAsync:async ()=>{
+        ToastHelper.YesNoToast({content:(<>Silmek istiyor musun ?</>),yesHandlerAsync:async ()=>{
             await props.DeleteHandlerAsync(event,data);
             await GetDataServiceAsyncHandlerAsync();
         }})
 
+    }
+
+    const UpdateFormSubmitHandlerAsync = async (values:any,resetForm:(nextState?: Partial<FormikState<any>> | undefined) => void)=>{
+        await props.UpdateFormSubmitHandlerAsync(values);
+        await GetDataServiceAsyncHandlerAsync();
+        resetForm();
     }
 
     const UpdateHtml = ():JSX.Element=>{
@@ -117,15 +125,26 @@ export const DynamicTable = (props:DynamicTableProp<any,any>):JSX.Element => {
         return (
             <CmsCardBody xlCol={12} xxlCol={12}>
                 <Box sx={{width:"100%"}}>
-                    {updateHtml}
-                    <Stack 
-                        direction="row" 
-                        spacing={2}
-                        justifyContent={'flex-end'}
-                        >
-                        <Button variant="outlined" size="small" color="error" onClick={UpdateHtmlCencelHandler} >İptal</Button>
-                        <Button variant="outlined" size="small" color="success" >Kaydet</Button>
-                    </Stack>
+                    <Formik 
+                        innerRef={updateFormik}
+                        initialValues={props.InitialValues}
+                        validationSchema={props.ValidationSchema}
+                        onSubmit={async (values,{resetForm} )=>{await UpdateFormSubmitHandlerAsync(values,resetForm);}}>
+                        {({ resetForm  }) => (
+                            <Form>
+                                {updateHtml}
+                                <Stack 
+                                    direction="row" 
+                                    spacing={2}
+                                    justifyContent={'flex-end'}
+                                    sx={{margin:"15px 0px 10px 0px"}}
+                                    >
+                                    <Button variant="outlined" size="small" color="error" onClick={UpdateHtmlCencelHandler} >İptal</Button>
+                                    <Button type='submit' variant="outlined" size="small" color="success" >Kaydet</Button>
+                                </Stack>
+                            </Form>
+                        )}
+                    </Formik>
                 </Box>
             </CmsCardBody>
         );
@@ -141,10 +160,10 @@ export const DynamicTable = (props:DynamicTableProp<any,any>):JSX.Element => {
         await props.AddFormSubmitHandlerAsync(values);
         await GetDataServiceAsyncHandlerAsync();
         resetForm();
-        
     }
 
     const AddHtml = ():JSX.Element=>{
+        const AddHtml = props.AddFormHtml();
         const AddHtmlCencelHandler = ()=>{
             setUpdateButtonShow(true);
             setAddHtmlShow(false);
@@ -158,7 +177,7 @@ export const DynamicTable = (props:DynamicTableProp<any,any>):JSX.Element => {
                         onSubmit={async (values,{resetForm} )=>{await AddFormSubmitHandlerAsync(values,resetForm);}}>
                         {({ resetForm  }) => (
                             <Form>
-                                {props.AddFormHtml}
+                                {AddHtml}
                                 <Stack 
                                     direction="row" 
                                     spacing={2}
@@ -184,6 +203,7 @@ export const DynamicTable = (props:DynamicTableProp<any,any>):JSX.Element => {
                 <>
                     {(updateHtmlShow?UpdateHtml():"")}
                     {(addHtmlShow?AddHtml():"")}
+                    
 
                     <TableContainer>
                         <Stack direction="row" alignItems="center"  justifyContent={"space-between"}>
@@ -203,7 +223,7 @@ export const DynamicTable = (props:DynamicTableProp<any,any>):JSX.Element => {
                             <TableHead>
                                 <TableRow>
                                     <TableCell>COUNT</TableCell>
-                                    {props.TableHead}
+                                    {props.TableHeadHtml}
                                     <TableCell align="right">ACTION</TableCell>
                                 </TableRow>
                             </TableHead>
@@ -218,7 +238,7 @@ export const DynamicTable = (props:DynamicTableProp<any,any>):JSX.Element => {
                                                     {
                                                         updateButtonShow ? (<Button variant="outlined" size="small"  onClick={(e)=>updateButtonClickHandler(e,x)} endIcon={<Icon icon="akar-icons:pencil" width="24" height="24"  />}>Update</Button>):""
                                                     }
-                                                    <Button variant="outlined" size="small"  onClick={(e)=>deleteButtonClickHandlerAsync(e,x)}  color="error"  endIcon={<Icon icon="weui:delete-filled" width="24" height="24"  style={{color: "error"}} />}>Delete</Button>
+                                                    <Button variant="outlined" size="small"  onClick={async (e)=>await deleteButtonClickHandlerAsync(e,x)}  color="error"  endIcon={<Icon icon="weui:delete-filled" width="24" height="24"  style={{color: "error"}} />}>Delete</Button>
                                                 </Stack>
                                             </TableCell>
                                         </TableRow>
