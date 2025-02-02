@@ -25,7 +25,7 @@ export const BlogPage = ():JSX.Element=>{
     
     const [blogValue,setBlogValue] = useState<WriteBlogDto>(emptyData);
     const [CkEdtorHelper,CkEdtor] = CkEditorField({name:"content",id:"content",data:""});
-    const dynamicTable:DynamicTableProp<ReadBlogDto,WriteBlogDto> =
+    const dynamicTable:DynamicTableProp<WriteBlogDto,ReadBlogDto> =
     {
         InitialValues:emptyData,
         ValidationSchema : Yup.object({

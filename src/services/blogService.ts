@@ -9,66 +9,8 @@ import { GenericServiceBase } from "./base/genericServiceBase"
 
 export class BlogService extends GenericServiceBase<WriteBlogDto,ReadBlogDto>{
 
-    /**
-     *
-     */
     constructor() {
         super(`${import.meta.env.VITE_CMS_API_URL}api/blog`)
     }
-
-    /*
-    public GetAllAsync = async ():Promise<IResultDataControl<Array<ReadBlogDto>>> =>{
-        let result = new ResultDataControl<Array<ReadBlogDto>>();
-
-        const ssss = await axios.get<IResultDataControl<Array<ReadBlogDto>>>(`${this.GetApiPath}/GetAll`,this.AxiosHeaderConfig())
-        .then(x=>{
-            result = x.data;
-        }).catch(x=>{
-            result.Fail();
-        })
-
-
-        return result;
-    }
-
-    public AddAsync = async (data:WriteBlogDto):Promise<IResultDataControl<Array<ReadBlogDto>>> =>{
-        let result = new ResultDataControl<Array<ReadBlogDto>>();
-
-        const ssss = await axios.post<IResultDataControl<Array<ReadBlogDto>>>(`${this.GetApiPath}/Add`,data,this.AxiosHeaderConfig())
-        .then(x=>{
-            result = x.data;
-        }).catch(x=>{
-            result.Fail();
-        })
-
-        return result;
-    }
-
-    public RemoveAsync = async (data:ReadBlogDto):Promise<IResultDataControl<Array<ReadBlogDto>>> =>{
-        let result = new ResultDataControl<Array<ReadBlogDto>>();
-
-        await axios.post<IResultDataControl<Array<ReadBlogDto>>>(`${this.GetApiPath}/Remove/${data.id}`,null,this.AxiosHeaderConfig())
-        .then(x=>{
-            result = x.data;
-        }).catch(x=>{
-            result.Fail();
-        })
-
-        return result;
-    }
-
-    public UpdateAsync = async (data:WriteBlogDto):Promise<IResultDataControl<Array<ReadBlogDto>>> => {
-        let result = new ResultDataControl<Array<ReadBlogDto>>();
-
-        await axios.post<IResultDataControl<Array<ReadBlogDto>>>(`${this.GetApiPath}/Update`,data,this.AxiosHeaderConfig())
-        .then(x=>{
-            result = x.data;
-        }).catch(x=>{
-            result.Fail();
-        });
-
-        return result;
-    }
-        */
 
 }

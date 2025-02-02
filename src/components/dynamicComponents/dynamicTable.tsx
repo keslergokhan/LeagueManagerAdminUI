@@ -22,7 +22,7 @@ import { toast } from 'react-toastify';
 
 
 
-export interface DynamicTableProp<TResposne,TRequest> {
+export interface DynamicTableProp<TRequest,TResposne> {
     /**
      * Tablo üzerindeki başlık
      */
@@ -79,8 +79,7 @@ export const DynamicTable = (props:DynamicTableProp<any,any>):JSX.Element => {
             if(!x.isSuccess){
                 ToastHelper.Error(<>An unexpected technical problem occurred!</>);
                 return x.data;
-            }else{
-                ToastHelper.Success(<>Veriler çekildi.</>);
+            }else{           
                 data.current = x.data;
             }
         }).catch(x=>{
@@ -228,7 +227,7 @@ export const DynamicTable = (props:DynamicTableProp<any,any>):JSX.Element => {
                                 <Typography> {props.Title} </Typography>
                                 <Stack direction="row" spacing={2}>
                                     {
-                                        dataLoading<=30?(<Button variant="contained" size="small" color="primary" onClick={()=>{GetDataServiceAsyncHandlerAsync()}} ><Icon icon="material-symbols:refresh" width="24" height="24"  style={{color: "#fff"}} /></Button>):("")
+                                        dataLoading<=30?(<Button variant="contained" size="small" color="primary" onClick={()=>{GetDataServiceAsyncHandlerAsync();ToastHelper.Success(<>Veriler çekildi.</>);}} ><Icon icon="material-symbols:refresh" width="24" height="24"  style={{color: "#fff"}} /></Button>):("")
                                     }
                                     
                                     {

@@ -178,6 +178,14 @@ export const LeftMenuComponent = () => {
                 <span>Blog</span>
               </NavLink>
             </li>
+            <li>
+              <NavLink to="/season" className={(navData) =>
+                navData.isActive ? "active-page" : ""
+              }>
+                <Icon icon="mage:email" className="menu-icon" />
+                <span>Sezon</span>
+              </NavLink>
+            </li>
           </ul>
         </div>
       </aside>
