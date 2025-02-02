@@ -4,31 +4,31 @@ import { ReadBlogDto } from "../entities/dtos/blogs/readBlogDto";
 import { WriteBlogDto } from "../entities/dtos/blogs/writeBlogDto";
 import { DefaultLayout } from "../layouts/defaultLayout"
 import { BlogService } from "../services/blogService"
-import { useEffect,useState } from "react";
-import { IResultDataControl } from "../commons/base/baseResultControl";
-import { Field,ErrorMessage, FieldProps, FormikProps } from "formik";
+import { useState } from "react";
+import { Field,ErrorMessage} from "formik";
 import { FormikDateField } from "../components/formikFields/formikDateField";
 import * as Yup from 'yup';
+import { Lclztn } from "../constants/localization";
 import { CkEditorField } from "../components/formikFields/ckEditorField";
-import {Grid2} from '@mui/material'
 
 export const BlogPage = ():JSX.Element=>{
 
     const blogService = new BlogService();
 
-    const [blogValue,setBlogValue] = useState<WriteBlogDto>({
+    const emptyData = {
         title:"",
         content:"",
         blogDate:new Date(),
         blogImage:"",
         state:0
-    });
+    };
+    
     
     const [CkEdtorHelper,CkEdtor] = CkEditorField({name:"content",id:"content",data:""});
     const dynamicTable:DynamicTableProp<ReadBlogDto,WriteBlogDto> =
     {
         AddFormHtml:()=>{
-
+            console.log(blogValue);
             return (
                 <>
                     <div>
@@ -62,7 +62,7 @@ export const BlogPage = ():JSX.Element=>{
             await blogService.RemoveAsync(data);
         },
         UpdateFormSubmitHandlerAsync:async (values:WriteBlogDto)=>{
-            console.log(values);
+            return await blogService.UpdateAsync(values);
         },
         GetDataServiceAsync:blogService.GetAllAsync,
         InitialValues:blogValue,
@@ -81,9 +81,8 @@ export const BlogPage = ():JSX.Element=>{
             </>
         ),
         Title:"Blog",
-        UpdateHtml:(event:React.MouseEvent<HTMLButtonElement>,data:WriteBlogDto):JSX.Element=>{
+        UpdateHtml:(data:WriteBlogDto):JSX.Element=>{
             setBlogValue(data);
-            
             return (<>
                     <div>
                         <label>Başlık</label>
@@ -103,13 +102,14 @@ export const BlogPage = ():JSX.Element=>{
                     
                     <div >
                         <label>Tarih</label>
-                        <FormikDateField name="blogDate" id="blogDate" value={data.blogDate.toString().split('T')[0]} ></FormikDateField>
+                        <FormikDateField name="blogDate" id="blogDate" data={data.blogDate.toString().split('T')[0]} ></FormikDateField>
                     </div>
             </>)
         },
         ValidationSchema : Yup.object({
-            title:Yup.string().required("Bu alan zorunludur "),
-            content:Yup.string().required("Bu alanda zorunludur")
+            title:Yup.string().required(Lclztn.pleasedonotempty.Get()),
+            content:Yup.string().required(Lclztn.pleasedonotempty.Get()),
+            blogDate:Yup.string().required(Lclztn.pleasedonotempty.Get())
         })
 
 

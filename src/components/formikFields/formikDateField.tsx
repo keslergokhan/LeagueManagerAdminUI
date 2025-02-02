@@ -1,14 +1,21 @@
 import { ErrorMessage, useField} from "formik";
+import { useEffect } from "react";
 
 interface FormikDateFieldProp{
     id:string;
     name:string;
-    value?:string;
+    data?:string;
 }
 
 export const FormikDateField = (props:FormikDateFieldProp):JSX.Element =>{
 
     const [field,meta,helper] = useField(props);
+
+    useEffect(()=>{
+        if(props.data){
+            helper.setValue(props.data);
+        }
+    },[]);
 
     return (
         <div>

@@ -8,6 +8,14 @@ import { AuthService } from "../authService";
 export class ServiceBase {
     protected GetApiPath:string;
 
+
+    /**
+     *
+     */
+    constructor(GetApiPath:string) {
+        this.GetApiPath = GetApiPath;        
+    }
+    
     private GetHeaderBearerToken():string{
         const getLocalJwt:IResultDataControl<GetJwtTokenResModel> = AuthService.GetLocalJwt();
 

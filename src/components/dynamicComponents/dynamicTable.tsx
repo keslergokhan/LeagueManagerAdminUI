@@ -14,7 +14,7 @@ import { Icon } from '@iconify/react/dist/iconify.js';
 import { useEffect, useRef, useState } from 'react';
 import { CmsCardBody } from '../shareds/cmsCardBody';
 import { ToastHelper } from '../../commons/helpers/toastHelpers';
-import { IResultDataControl } from '../../commons/base/baseResultControl';
+import { IResultControl, IResultDataControl } from '../../commons/base/baseResultControl';
 import { Formik,Form,FormikState, useFormik, FormikProps } from 'formik';
 import * as Yup from 'yup';
 import { toast } from 'react-toastify';
@@ -37,8 +37,8 @@ export interface DynamicTableProp<TResposne,TRequest> {
      * @param data Tabloda güncelleme işlemi yapılmak istenen kayıt.
      * @returns 
      */
-    UpdateHtml:(event:React.MouseEvent<HTMLButtonElement>,data:TResposne)=>JSX.Element;
-    UpdateFormSubmitHandlerAsync:(values:TRequest | any)=>Promise<any>;
+    UpdateHtml:(data:TResposne)=>JSX.Element;
+    UpdateFormSubmitHandlerAsync:(values:TRequest | any)=>Promise<IResultControl>;
     UpdateFormHtmlAfterHandlerAsync?:(values:TRequest | any)=>Promise<void>;
     /**
      * Tabloda silme işlemi tetiklendiğinde çalıştırılacak method
@@ -72,6 +72,8 @@ export const DynamicTable = (props:DynamicTableProp<any,any>):JSX.Element => {
     const [dataLoading,setDataLoading] = useState<number>(0);
     const updateFormik = useRef<FormikProps<any>>(null);
 
+    const [FORM_VALUE,SET_FORM_VALUE] = useState<any>(props.ValidationSchema);
+
     const data = useRef(new Array<any>);
 
     const GetDataServiceAsyncHandlerAsync = async () =>{
@@ -80,6 +82,7 @@ export const DynamicTable = (props:DynamicTableProp<any,any>):JSX.Element => {
                 ToastHelper.Error(<>An unexpected technical problem occurred!</>);
                 return x.data;
             }else{
+                ToastHelper.Success(<>Veriler çekildi.</>);
                 data.current = x.data;
             }
         }).catch(x=>{
@@ -95,15 +98,13 @@ export const DynamicTable = (props:DynamicTableProp<any,any>):JSX.Element => {
     },[]);
    
 
-    const updateButtonClickHandler = (event:React.MouseEvent<HTMLButtonElement>,data:any)=>{
+    const updateButtonClickHandler = (data:any)=>{
         setAddHtmlShow(false);
         setUpdateHtmlShow(true);
         setUpdateButtonShow(false);
         setAddButtonShow(false);
-        setUpdateHtml(props.UpdateHtml(event,data));
-        if(props.UpdateFormHtmlAfterHandlerAsync){
-            props.UpdateFormHtmlAfterHandlerAsync(data);
-        }
+        setUpdateHtml(props.UpdateHtml(data));
+        
     }
 
     const deleteButtonClickHandlerAsync = async (event:React.MouseEvent<HTMLButtonElement>,data:any) =>{
@@ -115,17 +116,30 @@ export const DynamicTable = (props:DynamicTableProp<any,any>):JSX.Element => {
     }
 
     const UpdateFormSubmitHandlerAsync = async (values:any,resetForm:(nextState?: Partial<FormikState<any>> | undefined) => void)=>{
-        await props.UpdateFormSubmitHandlerAsync(values);
+        await props.UpdateFormSubmitHandlerAsync(values).then(x=>{
+            if(x && x.isSuccess){
+                ToastHelper.Success(<>Güncelleme işlemi başarılı</>);
+                UpdateHtmlCencelHandler();
+            }else{
+                ToastHelper.Error(<>Beklenmedik teknik bir problem yaşandı !</>);
+            }
+
+            if(props.UpdateFormHtmlAfterHandlerAsync){
+                props.UpdateFormHtmlAfterHandlerAsync(values);
+            }
+        });
         await GetDataServiceAsyncHandlerAsync();
         resetForm();
     }
 
+
+    const UpdateHtmlCencelHandler = ()=>{
+        setUpdateButtonShow(true);
+        setUpdateHtmlShow(false);
+        setAddButtonShow(true);
+    }
     const UpdateHtml = ():JSX.Element=>{
-        const UpdateHtmlCencelHandler = ()=>{
-            setUpdateButtonShow(true);
-            setUpdateHtmlShow(false);
-            setAddButtonShow(true);
-        }
+        
         return (
             <CmsCardBody xlCol={12} xxlCol={12}>
                 <Box sx={{width:"100%"}}>
@@ -144,7 +158,7 @@ export const DynamicTable = (props:DynamicTableProp<any,any>):JSX.Element => {
                                     sx={{margin:"15px 0px 10px 0px"}}
                                     >
                                     <Button variant="outlined" size="small" color="error" onClick={UpdateHtmlCencelHandler} >İptal</Button>
-                                    <Button type='submit' variant="outlined" size="small" color="success" >Kaydet</Button>
+                                    <Button type='submit' variant="outlined" size="small" color="success" >Güncelle</Button>
                                 </Stack>
                             </Form>
                         )}
@@ -205,6 +219,8 @@ export const DynamicTable = (props:DynamicTableProp<any,any>):JSX.Element => {
             (dataLoading) ?
             (
                 <>
+                    {(updateHtmlShow?<>Güncelle</>:"")}
+                    {(addHtmlShow?<>Yeni Ekle</>:"")}
                     {(updateHtmlShow?UpdateHtml():"")}
                     {(addHtmlShow?AddHtml():"")}
                     
@@ -218,7 +234,7 @@ export const DynamicTable = (props:DynamicTableProp<any,any>):JSX.Element => {
                                     }
                                     
                                     {
-                                        addButtonShow ? (<Button variant="contained" size="small" color="success" onClick={addButtonClickHandler} endIcon={<Icon icon="akar-icons:pencil" width="24" height="24"  />}>Add New</Button>):""
+                                        addButtonShow ? (<Button variant="contained" size="small" color="success" onClick={addButtonClickHandler} endIcon={<Icon icon="akar-icons:pencil" width="24" height="24"  />}>Yeni Ekle</Button>):""
                                     }
                                 </Stack>
                                 
@@ -226,9 +242,9 @@ export const DynamicTable = (props:DynamicTableProp<any,any>):JSX.Element => {
                             <Table>
                                 <TableHead>
                                     <TableRow>
-                                        <TableCell>COUNT</TableCell>
+                                        <TableCell>Adet</TableCell>
                                         {props.TableHeadHtml}
-                                        <TableCell align="right">ACTION</TableCell>
+                                        <TableCell align="right">İşlem</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
@@ -240,9 +256,9 @@ export const DynamicTable = (props:DynamicTableProp<any,any>):JSX.Element => {
                                                 <TableCell align="right">
                                                     <Stack direction="row-reverse" spacing={2}  alignItems="flex-end">
                                                         {
-                                                            updateButtonShow ? (<Button variant="outlined" size="small"  onClick={(e)=>updateButtonClickHandler(e,x)} endIcon={<Icon icon="akar-icons:pencil" width="24" height="24"  />}>Update</Button>):""
+                                                            updateButtonShow ? (<Button variant="outlined" size="small"  onClick={(e)=>updateButtonClickHandler(x)} endIcon={<Icon icon="akar-icons:pencil" width="24" height="24"  />}>Güncelle</Button>):""
                                                         }
-                                                        <Button variant="outlined" size="small"  onClick={async (e)=>await deleteButtonClickHandlerAsync(e,x)}  color="error"  endIcon={<Icon icon="weui:delete-filled" width="24" height="24"  style={{color: "error"}} />}>Delete</Button>
+                                                        <Button variant="outlined" size="small"  onClick={async (e)=>await deleteButtonClickHandlerAsync(e,x)}  color="error"  endIcon={<Icon icon="weui:delete-filled" width="24" height="24"  style={{color: "error"}} />}>Sil</Button>
                                                     </Stack>
                                                 </TableCell>
                                             </TableRow>
@@ -256,7 +272,7 @@ export const DynamicTable = (props:DynamicTableProp<any,any>):JSX.Element => {
                 
             ):(
                 <Stack sx={{width:"100%",padding:"0px",margin:"0px"}} direction="column" alignContent="center" alignItems="center" justifyContent="center">
-                    <Typography>Loading ...</Typography>
+                    <Typography>Yükleniyor ...</Typography>
                     <Box  sx={{ display: 'flex', margin:"0px",padding:"0px",justifyContent: 'center', alignItems: 'center', height: '300px' }}>
                         <Icon icon="svg-spinners:ring-resize" width="75" height="75" style={{color:"dark"}} />
                     </Box>
