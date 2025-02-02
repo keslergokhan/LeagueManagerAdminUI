@@ -60,6 +60,7 @@ export interface DynamicTableProp<TResposne,TRequest> {
     GetDataServiceAsync:()=>Promise<IResultDataControl<Array<TResposne>>>;
     ValidationSchema:Yup.AnyObject;
     InitialValues:TRequest;
+    UseStateData:TRequest
 }
 
 
@@ -72,10 +73,7 @@ export const DynamicTable = (props:DynamicTableProp<any,any>):JSX.Element => {
     const [dataLoading,setDataLoading] = useState<number>(0);
     const updateFormik = useRef<FormikProps<any>>(null);
 
-    const [FORM_VALUE,SET_FORM_VALUE] = useState<any>(props.ValidationSchema);
-
     const data = useRef(new Array<any>);
-
     const GetDataServiceAsyncHandlerAsync = async () =>{
         await props.GetDataServiceAsync().then(x=>{
             if(!x.isSuccess){
@@ -145,7 +143,7 @@ export const DynamicTable = (props:DynamicTableProp<any,any>):JSX.Element => {
                 <Box sx={{width:"100%"}}>
                     <Formik 
                         innerRef={updateFormik}
-                        initialValues={props.InitialValues}
+                        initialValues={props.UseStateData}
                         validationSchema={props.ValidationSchema}
                         onSubmit={async (values,{resetForm} )=>{await UpdateFormSubmitHandlerAsync(values,resetForm);}}>
                         {({ resetForm  }) => (

@@ -23,12 +23,18 @@ export const BlogPage = ():JSX.Element=>{
         state:0
     };
     
-    
+    const [blogValue,setBlogValue] = useState<WriteBlogDto>(emptyData);
     const [CkEdtorHelper,CkEdtor] = CkEditorField({name:"content",id:"content",data:""});
     const dynamicTable:DynamicTableProp<ReadBlogDto,WriteBlogDto> =
     {
+        InitialValues:emptyData,
+        ValidationSchema : Yup.object({
+            title:Yup.string().required(Lclztn.pleasedonotempty.Get()),
+            content:Yup.string().required(Lclztn.pleasedonotempty.Get()),
+            blogDate:Yup.string().required(Lclztn.pleasedonotempty.Get())
+        }),
+        UseStateData:blogValue,
         AddFormHtml:()=>{
-            console.log(blogValue);
             return (
                 <>
                     <div>
@@ -65,7 +71,6 @@ export const BlogPage = ():JSX.Element=>{
             return await blogService.UpdateAsync(values);
         },
         GetDataServiceAsync:blogService.GetAllAsync,
-        InitialValues:blogValue,
         TableHeadHtml:(
             <>
                 <TableCell>Başlık</TableCell>
@@ -105,13 +110,7 @@ export const BlogPage = ():JSX.Element=>{
                         <FormikDateField name="blogDate" id="blogDate" data={data.blogDate.toString().split('T')[0]} ></FormikDateField>
                     </div>
             </>)
-        },
-        ValidationSchema : Yup.object({
-            title:Yup.string().required(Lclztn.pleasedonotempty.Get()),
-            content:Yup.string().required(Lclztn.pleasedonotempty.Get()),
-            blogDate:Yup.string().required(Lclztn.pleasedonotempty.Get())
-        })
-
+        }
 
     }
 
