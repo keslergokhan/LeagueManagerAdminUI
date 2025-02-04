@@ -194,6 +194,14 @@ export const LeftMenuComponent = () => {
                 <span>Takım</span>
               </NavLink>
             </li>
+            <li>
+              <NavLink to="/player" className={(navData) =>
+                navData.isActive ? "active-page" : ""
+              }>
+                <Icon icon="mage:email" className="menu-icon" />
+                <span>Oyuncular</span>
+              </NavLink>
+            </li>
           </ul>
         </div>
       </aside>

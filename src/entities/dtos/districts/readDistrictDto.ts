@@ -1,5 +1,5 @@
 import { ReadDtoBase } from "../../base/readDtoBase";
 
-export interface ReadCityDto extends ReadDtoBase{
+export interface ReadDistrictDto extends ReadDtoBase{
     name:string;
 }

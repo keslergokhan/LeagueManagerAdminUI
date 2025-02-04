@@ -7,6 +7,7 @@ import { ToastContainer } from 'react-toastify'
 import { SeasonPage } from './pages/seasonPage'
 import "react-toastify/dist/ReactToastify.css";
 import { TeamPage } from './pages/teamPage'
+import { PlayerPage } from './pages/playerPage'
 
 function App() {
 
@@ -21,6 +22,7 @@ function App() {
           <Route path='/blog' element={<BlogPage></BlogPage>}></Route>
           <Route path='/season' element={<SeasonPage></SeasonPage>}></Route>
           <Route path='/team' element={<TeamPage></TeamPage>}></Route>
+          <Route path="/player" element={<PlayerPage></PlayerPage>}></Route>
         </Routes>
         <ToastContainer></ToastContainer>
       </BrowserRouter>

@@ -4,6 +4,7 @@ import { IResultDataControl } from "../../commons/base/baseResultControl";
 import { ResultDataControl } from "../../commons/results/resultControl";
 import { ServiceBase } from "./serviceBase";
 import axios from "axios"
+import { ReadPlayerDto } from "../../entities/dtos/players/readPlayerDto";
 
 
 export abstract class GenericServiceBase<TRequest extends WriteDtoBase,TResponse extends ReadDtoBase> extends ServiceBase{
@@ -14,6 +15,19 @@ export abstract class GenericServiceBase<TRequest extends WriteDtoBase,TResponse
     constructor(GetApiPath:string) {
         super(GetApiPath);
         
+    }
+
+    public Get = async (ID:string):Promise<IResultDataControl<TResponse>>=>{
+        let result = new ResultDataControl<TResponse>();
+
+        await axios.get<IResultDataControl<TResponse>>(`${this.GetApiPath}/get/${ID}`,this.AxiosHeaderConfig())
+        .then(x=>{
+            result = x.data;
+        }).catch(x=>{
+            result.Fail();
+        })
+
+        return result;
     }
 
     public GetAllAsync = async ():Promise<IResultDataControl<Array<TResponse>>> =>{
@@ -67,4 +81,6 @@ export abstract class GenericServiceBase<TRequest extends WriteDtoBase,TResponse
 
         return result;
     }
+
+
 }
