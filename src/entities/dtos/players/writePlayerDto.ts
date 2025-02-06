@@ -7,12 +7,13 @@ export interface WritePlayerDto extends WriteDtoBase{
     name:string;
     surname:string;
     address:string;
-    position:string;
+    position:number;
     height:string;
     kilogram:number;
     birthDate:Date;
     formNumber:number;
     playerProfileImage:string;
+    teamID:string;
     team:WriteTeamDto;
     isCaptain:boolean;
     isReplacement:boolean;

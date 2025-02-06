@@ -5,6 +5,7 @@ interface FormikDateFieldProp{
     id:string;
     name:string;
     data?:string;
+    style?:React.CSSProperties
 }
 
 export const FormikDateField = (props:FormikDateFieldProp):JSX.Element =>{

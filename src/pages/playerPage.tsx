@@ -3,24 +3,28 @@ import { TeamService } from "../services/teamService";
 import { DynamicTable, DynamicTableProp } from "../components/dynamicComponents/dynamicTable";
 import * as Yup from 'yup'
 import { Lclztn } from "../constants/localization";
-import { TableCell,TextField } from "@mui/material";
+import { TableCell,Grid2} from "@mui/material";
 import { Field,ErrorMessage,} from "formik";
 import { DefaultLayout } from "../layouts/defaultLayout";
 import { WritePlayerDto } from "../entities/dtos/players/writePlayerDto";
 import { ReadPlayerDto } from "../entities/dtos/players/readPlayerDto";
 import { PlayerService } from "../services/playerService";
 import { useEffect } from "react";
-import { ResultDataControl } from "../commons/results/resultControl";
-import { ReadTeamDto } from "../entities/dtos/teams/readTeamDto";
 import { ToastHelper } from "../commons/helpers/toastHelpers";
 import { Icon } from "@iconify/react";
-
+import { PlayerPositionSelectField } from "../components/formikFields/playerPositionSelectField";
+import { FormikDateField } from "../components/formikFields/formikDateField";
+import { FormikSearchSelectField } from "../components/formikFields/formikSearchSelectField";
+import { FormikYesNoSelectField } from "../components/formikFields/formikYesNoSelectField";
 
 export const PlayerPage = ():JSX.Element=>{
 
+
+    const teamService = new TeamService();
     const service = new PlayerService();
 
     const EMTPY_TEAM:WritePlayerDto = {
+        teamID:"",
         name:"",
         state:0,
         address:"",
@@ -33,7 +37,7 @@ export const PlayerPage = ():JSX.Element=>{
         isReplacement:false,
         kilogram:0,
         playerProfileImage:"",
-        position:"",
+        position:0,
         surname:"",
         team:{
             description:"",
@@ -43,6 +47,23 @@ export const PlayerPage = ():JSX.Element=>{
         }
     }; 
     const [TEAM,SET_PLAYER] = useState<WritePlayerDto>(EMTPY_TEAM);
+    let teamSelectData = new Array<any>();
+
+
+    useEffect(()=>{
+        teamService.GetAllAsync().then(x=>{
+            if(x.isSuccess){
+                teamSelectData = x.data.map(i=>{
+                    return {
+                        label:i.name,
+                        value:i.id
+                    }
+                })
+            }else{
+                ToastHelper.Error(<> Beklenmedik bir problem yaşandı ! </>);
+            }
+        })
+    });
     
     const dynamicTableProp:DynamicTableProp<WritePlayerDto,ReadPlayerDto> = {
         Title:"Takımlar",
@@ -82,83 +103,99 @@ export const PlayerPage = ():JSX.Element=>{
         },
         GetDataServiceAsync:service.GetAllAsync,
         AddFormSubmitHandlerAsync:async (data:WritePlayerDto)=>{
-            return await service.AddAsync(data);
+            return null;
         },
         AddFormHtml:()=>{
-
+           
             return (
                 <>
-                    <div>
-                        <label>Ad Soyad</label>
-                        <Field className="form-control" tpye="text" id="name" name="name" ></Field>
-                        <ErrorMessage name="name" component="span" className="text-danger" ></ErrorMessage>
-                    </div>
-                    <div>
-                        <label>Takım</label>
-                        <Field className="form-control" tpye="text" id="name" name="name" ></Field>
-                        <ErrorMessage name="name" component="span" className="text-danger" ></ErrorMessage>
-                    </div>
-                    <div>
-                        <label>Kaptan</label>
-                        <Field className="form-control" tpye="text" id="name" name="name" ></Field>
-                        <ErrorMessage name="name" component="span" className="text-danger" ></ErrorMessage>
-                    </div>
-                    <div>
-                        <label>Yedek</label>
-                        <Field className="form-control" tpye="text" id="name" name="name" ></Field>
-                        <ErrorMessage name="name" component="span" className="text-danger" ></ErrorMessage>
-                    </div>
+                    <Grid2 container spacing={2} columns={12}>
+                        <Grid2 size={6}>
+                            <div>
+                                <label>Ad</label>
+                                <Field className="form-control" tpye="text" id="name" name="name" ></Field>
+                                <ErrorMessage name="name" component="span" className="text-danger" ></ErrorMessage>
+                            </div>
+                        </Grid2>
+                        <Grid2 size={6}>
+                            <div>
+                                <label>Soyad</label>
+                                <Field className="form-control" tpye="text" id="surname" name="surname" ></Field>
+                                <ErrorMessage name="surname" component="span" className="text-danger" ></ErrorMessage>
+                            </div>
+                        </Grid2>
+                    </Grid2>
+                   
+                    <Grid2 container spacing={2} columns={12}>
+                        <Grid2 size={4}>
+                            <div>
+                                <label>Takım</label>
+                                <FormikSearchSelectField type="text" label="Takım" id="teamID" name="teamID" options={teamSelectData}></FormikSearchSelectField>
+                                <Field name="teamID" id="teamID" tpye="text" hidden></Field>
+                                <ErrorMessage name="teamID" component="span" className="text-danger" ></ErrorMessage>
+                            </div>
+                        </Grid2>
+                        <Grid2 size={4}>
+                            <div>
+                                <FormikYesNoSelectField label="Kaptan" name="isCaptain" id="isCaptain"></FormikYesNoSelectField>
+                                <ErrorMessage name="isCaptain" component="span" className="text-danger" ></ErrorMessage>
+                            </div>
+                          
+                        </Grid2>
+                        <Grid2 size={4}>
+                            <div>
+                                <FormikYesNoSelectField label="Yedek Oyuncu" name="isReplacement" id="isReplacement"></FormikYesNoSelectField>
+                                <ErrorMessage name="isReplacement" component="span" className="text-danger" ></ErrorMessage>
+                            </div>
+                        </Grid2>
+                    </Grid2>
+                    
+                  
                     <div>
                         <label>Profil</label>
-                        <Field className="form-control" tpye="text" id="teamLogoImage" name="teamLogoImage" ></Field>
-                        <ErrorMessage name="teamLogoImage" component="span" className="text-danger" ></ErrorMessage>
+                        <Field className="form-control" tpye="text" id="playerProfileImage" name="playerProfileImage" ></Field>
+                        <ErrorMessage name="playerProfileImage" component="span" className="text-danger" ></ErrorMessage>
                     </div>
-                    <div>
-                        <label>Takım</label>
-                        <Field sx={{marginBottom:"50px"}} className="form-control"id="description" variant="outlined" margin="normal" multiline rows={3} name="description" ></Field>
-                        <ErrorMessage name="description" component="span" className="text-danger" ></ErrorMessage>
-                    </div>
-                    <div>
-                        <label>Takım</label>
-                        <Field sx={{marginBottom:"50px"}} className="form-control"id="description" variant="outlined" margin="normal" multiline rows={3} name="description" ></Field>
-                        <ErrorMessage name="description" component="span" className="text-danger" ></ErrorMessage>
-                    </div>
-                    <div>
-                        <label>Mevki</label>
-                        <Field sx={{marginBottom:"50px"}} className="form-control"id="description" variant="outlined" margin="normal" multiline rows={3} name="description" ></Field>
-                        <ErrorMessage name="description" component="span" className="text-danger" ></ErrorMessage>
-                    </div>
-                    <div>
-                        <label>Forma Numarası</label>
-                        <Field sx={{marginBottom:"50px"}} className="form-control"id="description" variant="outlined" margin="normal" multiline rows={3} name="description" ></Field>
-                        <ErrorMessage name="description" component="span" className="text-danger" ></ErrorMessage>
-                    </div>
-                    <div>
-                        <label>Doğum Yılı</label>
-                        <Field sx={{marginBottom:"50px"}} className="form-control"id="description" variant="outlined" margin="normal" multiline rows={3} name="description" ></Field>
-                        <ErrorMessage name="description" component="span" className="text-danger" ></ErrorMessage>
-                    </div>
-                    <div>
-                        <label>Kilogram</label>
-                        <Field sx={{marginBottom:"50px"}} className="form-control"id="description" variant="outlined" margin="normal" multiline rows={3} name="description" ></Field>
-                        <ErrorMessage name="description" component="span" className="text-danger" ></ErrorMessage>
-                    </div>
-                    <div>
-                        <label>Boy</label>
-                        <Field sx={{marginBottom:"50px"}} className="form-control"id="description" variant="outlined" margin="normal" multiline rows={3} name="description" ></Field>
-                        <ErrorMessage name="description" component="span" className="text-danger" ></ErrorMessage>
-                    </div>
-                    <div>
-                        <label>Forma Numarası</label>
-                        <Field sx={{marginBottom:"50px"}} className="form-control"id="description" variant="outlined" margin="normal" multiline rows={3} name="description" ></Field>
-                        <ErrorMessage name="description" component="span" className="text-danger" ></ErrorMessage>
-                    </div>
+                 
+                    <Grid2 container spacing={2} columns={12}>
+                        <Grid2 size={6}>
+                            <PlayerPositionSelectField  name="position" id="position"></PlayerPositionSelectField>
+                            <ErrorMessage name="position" component="span" className="text-danger" ></ErrorMessage>
+                        </Grid2>
+                        <Grid2 size={6}>
+                            <div>
+                                <label>Forma Numarası</label>
+                                <Field sx={{marginBottom:"50px"}} type="number" className="form-control" id="formNumber" name="formNumber" variant="outlined" margin="normal" rows={3}  ></Field>
+                                <ErrorMessage name="formNumber" component="span" className="text-danger" ></ErrorMessage>
+                            </div>
+                        </Grid2>                       
+                    </Grid2>
 
-                    <div>
-                        <label>Adres</label>
-                        <Field sx={{marginBottom:"50px"}} className="form-control"id="description" variant="outlined" margin="normal" multiline rows={3} name="description" ></Field>
-                        <ErrorMessage name="description" component="span" className="text-danger" ></ErrorMessage>
-                    </div>
+
+                    <Grid2 container spacing={2} columns={12}>
+                        <Grid2 size={4}>
+                            <div>
+                                <label>Doğum Tarihi</label>
+                                <FormikDateField name="birthDate" id="birthDate" data="1990-01-01" ></FormikDateField>
+                                <ErrorMessage name="birthDate" component="span" className="text-danger" ></ErrorMessage>
+                            </div>
+                        </Grid2>                
+                        <Grid2 size={4}>
+                            <div>
+                                <label>Kilogram</label>
+                                <Field className="form-control" type="number" id="kilogram" variant="outlined" margin="normal" rows={3} name="kilogram" ></Field>
+                                <ErrorMessage name="kilogram" component="span" className="text-danger" ></ErrorMessage>
+                            </div>
+                        </Grid2>
+                        <Grid2 size={4}>
+                            <div>
+                                <label>Boy</label>
+                                <Field sx={{marginBottom:"50px"}} type="number" className="form-control" id="height" variant="outlined" margin="normal" rows={3} name="height" ></Field>
+                                <ErrorMessage name="height" component="span" className="text-danger" ></ErrorMessage>
+                            </div>
+                        </Grid2>    
+                    </Grid2>
+
                    
                 </>
             );
@@ -168,23 +205,95 @@ export const PlayerPage = ():JSX.Element=>{
         },
         UpdateHtml:(data:ReadPlayerDto)=>{
             SET_PLAYER(data);
+            console.log(data);
             return (
                 <>
+                    <Grid2 container spacing={2} columns={12}>
+                        <Grid2 size={6}>
+                            <div>
+                                <label>Ad</label>
+                                <Field className="form-control" tpye="text" id="name" name="name" ></Field>
+                                <ErrorMessage name="name" component="span" className="text-danger" ></ErrorMessage>
+                            </div>
+                        </Grid2>
+                        <Grid2 size={6}>
+                            <div>
+                                <label>Soyad</label>
+                                <Field className="form-control" tpye="text" id="surname" name="surname" ></Field>
+                                <ErrorMessage name="surname" component="span" className="text-danger" ></ErrorMessage>
+                            </div>
+                        </Grid2>
+                    </Grid2>
+                   
+                    <Grid2 container spacing={2} columns={12}>
+                        <Grid2 size={4}>
+                            <div>
+                                <label>Takım</label>
+                                <FormikSearchSelectField label="Takım" currentData={teamSelectData.find(x=>x["value"] == data.teamID)} type="text" id="teamID" name="teamID" options={teamSelectData}></FormikSearchSelectField>
+                                <Field name="teamID" id="teamID" tpye="text" hidden></Field>
+                                <ErrorMessage name="teamID" component="span" className="text-danger" ></ErrorMessage>
+                            </div>
+                        </Grid2>
+                        <Grid2 size={4}>
+                            <div>
+                                <FormikYesNoSelectField data={data.isCaptain} label="Kaptan" name="isCaptain" id="isCaptain"></FormikYesNoSelectField>
+                                <ErrorMessage name="isCaptain" component="span" className="text-danger" ></ErrorMessage>
+                            </div>
+                          
+                        </Grid2>
+                        <Grid2 size={4}>
+                            <div>
+                                <FormikYesNoSelectField data={data.isReplacement} label="Yedek Oyuncu" name="isReplacement" id="isReplacement"></FormikYesNoSelectField>
+                                <ErrorMessage name="isReplacement" component="span" className="text-danger" ></ErrorMessage>
+                            </div>
+                        </Grid2>
+                    </Grid2>
+                    
+                  
                     <div>
-                        <label>Takım Adı</label>
-                        <Field className="form-control" tpye="text" id="name" name="name" ></Field>
-                        <ErrorMessage name="name" component="span" className="text-danger" ></ErrorMessage>
+                        <label>Profil</label>
+                        <Field className="form-control" tpye="text" id="playerProfileImage" name="playerProfileImage" ></Field>
+                        <ErrorMessage name="playerProfileImage" component="span" className="text-danger" ></ErrorMessage>
                     </div>
-                    <div>
-                        <label>Takım Logo</label>
-                        <Field className="form-control" tpye="text" id="teamLogoImage" name="teamLogoImage" ></Field>
-                        <ErrorMessage name="teamLogoImage" component="span" className="text-danger" ></ErrorMessage>
-                    </div>
-                    <div>
-                        <label>Takım Hakkında Kısa Açıklama</label>
-                        <Field sx={{marginBottom:"50px"}} className="form-control"id="description" variant="outlined" margin="normal" multiline rows={3} name="description" ></Field>
-                        <ErrorMessage name="description" component="span" className="text-danger" ></ErrorMessage>
-                    </div>
+                 
+                    <Grid2 container spacing={2} columns={12}>
+                        <Grid2 size={6}>
+                            <PlayerPositionSelectField data={data.position}  name="position" id="position"></PlayerPositionSelectField>
+                            <ErrorMessage name="position" component="span" className="text-danger" ></ErrorMessage>
+                        </Grid2>
+                        <Grid2 size={6}>
+                            <div>
+                                <label>Forma Numarası</label>
+                                <Field sx={{marginBottom:"50px"}} type="number" className="form-control" id="formNumber" name="formNumber" variant="outlined" margin="normal" rows={3}  ></Field>
+                                <ErrorMessage name="formNumber" component="span" className="text-danger" ></ErrorMessage>
+                            </div>
+                        </Grid2>                       
+                    </Grid2>
+
+
+                    <Grid2 container spacing={2} columns={12}>
+                        <Grid2 size={4}>
+                            <div>
+                                <label>Doğum Tarihi</label>
+                                <FormikDateField name="birthDate" id="birthDate" data="1990-01-01" ></FormikDateField>
+                                <ErrorMessage name="birthDate" component="span" className="text-danger" ></ErrorMessage>
+                            </div>
+                        </Grid2>                
+                        <Grid2 size={4}>
+                            <div>
+                                <label>Kilogram</label>
+                                <Field className="form-control" type="number" id="kilogram" variant="outlined" margin="normal" rows={3} name="kilogram" ></Field>
+                                <ErrorMessage name="kilogram" component="span" className="text-danger" ></ErrorMessage>
+                            </div>
+                        </Grid2>
+                        <Grid2 size={4}>
+                            <div>
+                                <label>Boy</label>
+                                <Field sx={{marginBottom:"50px"}} type="number" className="form-control" id="height" variant="outlined" margin="normal" rows={3} name="height" ></Field>
+                                <ErrorMessage name="height" component="span" className="text-danger" ></ErrorMessage>
+                            </div>
+                        </Grid2>    
+                    </Grid2>
                 
             </>);
         },

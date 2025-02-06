@@ -7,7 +7,7 @@ export interface ReadPlayerDto extends ReadDtoBase{
     name:string;
     surname:string;
     address:string;
-    position:string;
+    position:number;
     height:string;
     kilogram:number;
     birthDate:Date;
