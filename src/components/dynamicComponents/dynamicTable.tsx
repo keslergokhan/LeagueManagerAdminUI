@@ -31,14 +31,29 @@ export interface DynamicTableProp<TRequest,TResposne> {
      * Yeni bir kayıt ekle buttonuna basıldığında aktif olacak html/form tasarımı.
      */
     AddFormHtml:()=>JSX.Element;
-    AddFormSubmitHandlerAsync:(values:TRequest | any)=>Promise<any>;
+    /**
+     * Yeni form ekle button eventi
+     * @param values TRequest
+     * @returns 
+     */
+    AddFormSubmitHandlerAsync:(values:TRequest | any)=>Promise<IResultDataControl<TResposne>>;
     /**
      * Tablo içerisinde güncelleme işlemi sonrası aktif olacak html/form tasarımı.
      * @param data Tabloda güncelleme işlemi yapılmak istenen kayıt.
      * @returns 
      */
     UpdateHtml:(data:TResposne)=>JSX.Element;
+    /**
+     * Güncelle buttonu gönder buttonu
+     * @param values TRequest
+     * @returns 
+     */
     UpdateFormSubmitHandlerAsync:(values:TRequest | any)=>Promise<IResultControl>;
+    /**
+     * Güncelleme form kodları
+     * @param values 
+     * @returns 
+     */
     UpdateFormHtmlAfterHandlerAsync?:(values:TRequest | any)=>Promise<void>;
     /**
      * Tabloda silme işlemi tetiklendiğinde çalıştırılacak method
@@ -47,6 +62,7 @@ export interface DynamicTableProp<TRequest,TResposne> {
      * @returns 
      */
     DeleteHandlerAsync:(event:React.MouseEvent<HTMLButtonElement>,data:TResposne)=>Promise<void>;
+    DeleteBeforeHandlerAsync?:()=>Promise<IResultControl>;
     /**
      * Tablonun header alanı
      */
@@ -57,14 +73,33 @@ export interface DynamicTableProp<TRequest,TResposne> {
      * @returns 
      */
     TableRow:(data:TResposne)=>JSX.Element;
+    /**
+     * Tablo verisinin çekileceği servis mothodu
+     * @returns 
+     */
     GetDataServiceAsync:()=>Promise<IResultDataControl<Array<TResposne>>>;
+    /**
+     * Formik Yup validasyon
+     */
     ValidationSchema:Yup.AnyObject;
+    /**
+     * Formik default value
+     */
     InitialValues:TRequest;
-    UseStateData:TRequest
+    /**
+     * TRequest useState değeirni alır
+     */
+    UseStateData:TRequest;
+    /**
+     * Formda silme buttonu aktif/pasif olsun
+     */
+    formDeleteOnOff:boolean;
 }
 
 
 export const DynamicTable = (props:DynamicTableProp<any,any>):JSX.Element => {
+
+
     const [updateHtmlShow,setUpdateHtmlShow] = useState<boolean>(false);
     const [addHtmlShow,setAddHtmlShow] = useState<boolean>(false);
     const [updateHtml,setUpdateHtml] = useState<JSX.Element>(<></>);
@@ -172,13 +207,25 @@ export const DynamicTable = (props:DynamicTableProp<any,any>):JSX.Element => {
     }
 
     const AddFormSubmitHandlerAsync = async (values:any,resetForm:(nextState?: Partial<FormikState<any>> | undefined) => void)=>{
-        await props.AddFormSubmitHandlerAsync(values);
-        document.querySelectorAll(".MuiAutocomplete-clearIndicator")?.forEach(x=>{
-            if(x as HTMLElement){
-                const selectClear = x as HTMLElement;
-                selectClear.click();
+        await props.AddFormSubmitHandlerAsync(values).then(x=>{
+
+
+            document.querySelectorAll(".MuiAutocomplete-clearIndicator")?.forEach(x=>{
+                if(x as HTMLElement){
+                    const selectClear = x as HTMLElement;
+                    selectClear.click();
+                }
+            })
+
+            return x;
+        }).then(x=>{
+            if(x.isSuccess){
+                ToastHelper.Success(<>Ekleme işlemi başarılı </>);
+            }else{
+                ToastHelper.DefaultError();
             }
-        })
+        });
+        
         await GetDataServiceAsyncHandlerAsync();
         resetForm();
     }
@@ -261,7 +308,10 @@ export const DynamicTable = (props:DynamicTableProp<any,any>):JSX.Element => {
                                                         {
                                                             updateButtonShow ? (<Button variant="outlined" size="small"  onClick={(e)=>updateButtonClickHandler(x)} endIcon={<Icon icon="akar-icons:pencil" width="24" height="24"  />}>Güncelle</Button>):""
                                                         }
-                                                        <Button variant="outlined" size="small"  onClick={async (e)=>await deleteButtonClickHandlerAsync(e,x)}  color="error"  endIcon={<Icon icon="weui:delete-filled" width="24" height="24"  style={{color: "error"}} />}>Sil</Button>
+                                                        {
+                                                            props.formDeleteOnOff ? <Button variant="outlined" size="small"  onClick={async (e)=>await deleteButtonClickHandlerAsync(e,x)}  color="error"  endIcon={<Icon icon="weui:delete-filled" width="24" height="24"  style={{color: "error"}} />}>Sil</Button> :""
+                                                        }
+                                                        
                                                     </Stack>
                                                 </TableCell>
                                             </TableRow>

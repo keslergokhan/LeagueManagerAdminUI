@@ -62,7 +62,7 @@ export const BlogPage = ():JSX.Element=>{
         },
         AddFormSubmitHandlerAsync:async(values:WriteBlogDto)=>{
             CkEdtorHelper.current.setData("");
-            await blogService.AddAsync(values);
+            return await blogService.AddAsync(values);
         },
         DeleteHandlerAsync:async(event:React.MouseEvent<HTMLButtonElement>,data:ReadBlogDto)=>{
             await blogService.RemoveAsync(data);
@@ -110,7 +110,8 @@ export const BlogPage = ():JSX.Element=>{
                         <FormikDateField name="blogDate" id="blogDate" data={data.blogDate.toString().split('T')[0]} ></FormikDateField>
                     </div>
             </>)
-        }
+        },
+        formDeleteOnOff:true
 
     }
 

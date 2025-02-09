@@ -162,7 +162,7 @@ export const LeftMenuComponent = () => {
             </li>
 
             <li className="sidebar-menu-group-title">Application</li>
-            <li>
+            <li hidden>
               <NavLink to="/home" className={(navData) =>
                 navData.isActive ? "active-page" : ""
               }>
@@ -171,37 +171,14 @@ export const LeftMenuComponent = () => {
               </NavLink>
             </li>
             <li>
-              <NavLink to="/blog" className={(navData) =>
+              <NavLink to="/league" className={(navData) =>
                 navData.isActive ? "active-page" : ""
               }>
-                <Icon icon="mage:email" className="menu-icon" />
-                <span>Blog</span>
+                <Icon icon="simple-icons:indiansuperleague" className="menu-icon"/>
+                <span>Lig</span>
               </NavLink>
             </li>
-            <li>
-              <NavLink to="/season" className={(navData) =>
-                navData.isActive ? "active-page" : ""
-              }>
-                <Icon icon="mage:email" className="menu-icon" />
-                <span>Sezon</span>
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/team" className={(navData) =>
-                navData.isActive ? "active-page" : ""
-              }>
-                <Icon icon="mage:email" className="menu-icon" />
-                <span>Takım</span>
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/player" className={(navData) =>
-                navData.isActive ? "active-page" : ""
-              }>
-                <Icon icon="mage:email" className="menu-icon" />
-                <span>Oyuncular</span>
-              </NavLink>
-            </li>
+            
           </ul>
         </div>
       </aside>

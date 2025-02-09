@@ -1,84 +1,36 @@
-import { useState } from "react";
-import { DynamicTableProp } from "../components/dynamicComponents/dynamicTable";
-import { ReadSeasonDto } from "../entities/dtos/seasons/readSeasonDto";
-import { WriteSeasonDto } from "../entities/dtos/seasons/writeSeasonDto";
-import * as Yup from 'yup'
-import { Lclztn } from "../constants/localization";
-import { TableCell } from "@mui/material";
-import { SeasonService } from "../services/seasonService";
-import { Field,ErrorMessage } from "formik";
+import { useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { PageRoutes } from "../constants/pageRoute";
+import { LeagueService } from "../services/leagueService";
+import { ToastHelper } from "../commons/helpers/toastHelpers";
 import { DefaultLayout } from "../layouts/defaultLayout";
-import { DynamicTable } from "../components/dynamicComponents/dynamicTable";
-
+import { useSetBreadCrumb2 } from "../hooks/useBranchCrumb";
 
 
 export const SeasonPage = ():JSX.Element => {
 
-    const seasonService = new SeasonService();
-    const EMPTY_SEASON:WriteSeasonDto = {
-        name:"",
-        state:0,
-    };
+    useSetBreadCrumb2(PageRoutes.Season,false);
+    
+    const leagueService = new LeagueService();
+    const navigate = useNavigate();
+    const {id} = useParams();
+    let SEASON = null;
 
-    const [SEASON,SET_SEASON] = useState<WriteSeasonDto>(EMPTY_SEASON);
-    const dynamicTableProp:DynamicTableProp<WriteSeasonDto,ReadSeasonDto> = {
-        Title:"Sezonlar",
-        InitialValues : EMPTY_SEASON,
-        UseStateData:SEASON,
-        ValidationSchema : Yup.object({
-            name:Yup.string().required(Lclztn.empty().Get())
-        }),
-        TableHeadHtml:(
-            <>
-                <TableCell>Sezon</TableCell>
-            </>
-        ),
-        TableRow : (data:ReadSeasonDto)=>{
-            return (
-            <>
-                <TableCell>{data.name}</TableCell>
-            </>);
-        },
-        GetDataServiceAsync:seasonService.GetAllAsync,
-        AddFormSubmitHandlerAsync:async (data:WriteSeasonDto)=>{
-            return await seasonService.AddAsync(data);
-        },
-        AddFormHtml:()=>{
-
-            return (
-                <>
-                    <div>
-                        <label>Başlık</label>
-                        <Field className="form-control" tpye="text" id="name" name="name" ></Field>
-                        <ErrorMessage name="name" component="span" className="text-danger" ></ErrorMessage>
-                    </div>
-                </>
-            );
-        },
-        UpdateFormSubmitHandlerAsync:async(data:WriteSeasonDto)=>{
-            return await seasonService.UpdateAsync(data);
-        },
-        UpdateHtml:(data:ReadSeasonDto)=>{
-            SET_SEASON(data);
-            return (<>
-                <div>
-                    <label>Başlık</label>
-                    <Field className="form-control" tpye="text" id="name" name="name" ></Field>
-                    <ErrorMessage name="name" component="span" className="text-danger" ></ErrorMessage>
-                </div>
-                
-            </>);
-        },
-        DeleteHandlerAsync:async(event:React.MouseEvent<HTMLButtonElement>,data:ReadSeasonDto)=>{
-            await await seasonService.RemoveAsync(data);
-        },
-    };
-
-
+    useEffect(()=>{
+        leagueService.Get(id).then(x=>{
+            if(x.isSuccess && x.data!=null){
+            }else{
+                ToastHelper.DefaultError();
+                setTimeout(() => {
+                    navigate(PageRoutes.League.Path);
+                }, 500);
+            }
+        })
+    },[id]);
 
     return (<>
         <DefaultLayout>
-            <DynamicTable {...dynamicTableProp}></DynamicTable>
+            Sezonlar
         </DefaultLayout>
     </>);
 }

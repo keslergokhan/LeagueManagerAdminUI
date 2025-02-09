@@ -18,10 +18,14 @@ export abstract class GenericServiceBase<TRequest extends WriteDtoBase,TResponse
         
     }
 
-    public Get = async (ID:string):Promise<IResultDataControl<TResponse>>=>{
+    public Get = async (ID:string|undefined):Promise<IResultDataControl<TResponse>>=>{
+        
         let result = new ResultDataControl<TResponse>();
-
-        await axios.get<IResultDataControl<TResponse>>(`${this.GetApiPath}/get/${ID}`,this.AxiosHeaderConfig())
+        if(!ID){
+            result.Fail();
+            return result;
+        }
+        await axios.get<IResultDataControl<TResponse>>(`${this.GetApiPath}/getbyid/${ID}`,this.AxiosHeaderConfig())
         .then(x=>{
             result = x.data;
         }).catch(x=>{
@@ -44,10 +48,10 @@ export abstract class GenericServiceBase<TRequest extends WriteDtoBase,TResponse
         return result;
     }
 
-    public AddAsync = async (data:TRequest):Promise<IResultDataControl<Array<TResponse>>> =>{
-        let result = new ResultDataControl<Array<TResponse>>();
+    public AddAsync = async (data:TRequest):Promise<IResultDataControl<TResponse>> =>{
+        let result = new ResultDataControl<TResponse>();
 
-        await axios.post<IResultDataControl<Array<TResponse>>>(`${this.GetApiPath}/Add`,data,this.AxiosHeaderConfig())
+        await axios.post<IResultDataControl<TResponse>>(`${this.GetApiPath}/Add`,data,this.AxiosHeaderConfig())
         .then(x=>{
             result = x.data;
         }).catch(x=>{
