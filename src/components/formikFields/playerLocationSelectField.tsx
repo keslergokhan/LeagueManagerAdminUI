@@ -1,10 +1,12 @@
 import { useField } from "formik";
 import { Field } from "formik";
-import { PlayerPosition } from "../../constants/playerPosition";
+import { PlayerPosition } from "../../constants/playerLocation";
 import { useEffect } from "react";
+import { ErrorMessage } from "formik";
 
 interface PlayerPositionSelectProps {
     name:string;
+    label:string;
     id:string;
     data?:number;
 }
@@ -21,12 +23,13 @@ export const PlayerPositionSelectField = (props:PlayerPositionSelectProps):JSX.E
 
     return (
         <>
-            <label>Mevki</label>
-            <Field {...field} {...props} type="text" hidden></Field>
-            <select className="form-control" value={(props.data ? props.data:1)}
+            <label>{props.label}</label>
+            <Field {...field} {...props} type="number" hidden></Field>
+            <select className="form-control" 
                 onChange={(x)=>{
                     if(x.target){
                         helper.setValue(x.target.value);
+                        x.target.querySelector(`[value="${x.target.value}"]`)?.setAttribute("selected","true")
                     }
                 }}>
 
@@ -39,6 +42,7 @@ export const PlayerPositionSelectField = (props:PlayerPositionSelectProps):JSX.E
                     
                 })}
             </select>
+            <ErrorMessage name={props.name} component="span" className="text-danger" ></ErrorMessage>
         </>
     );
 }

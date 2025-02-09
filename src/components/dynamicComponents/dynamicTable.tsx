@@ -173,6 +173,12 @@ export const DynamicTable = (props:DynamicTableProp<any,any>):JSX.Element => {
 
     const AddFormSubmitHandlerAsync = async (values:any,resetForm:(nextState?: Partial<FormikState<any>> | undefined) => void)=>{
         await props.AddFormSubmitHandlerAsync(values);
+        document.querySelectorAll(".MuiAutocomplete-clearIndicator")?.forEach(x=>{
+            if(x as HTMLElement){
+                const selectClear = x as HTMLElement;
+                selectClear.click();
+            }
+        })
         await GetDataServiceAsyncHandlerAsync();
         resetForm();
     }

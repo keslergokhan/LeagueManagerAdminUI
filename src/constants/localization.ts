@@ -1,28 +1,28 @@
 class Localization {
-
-    
-    
-
     /** Lütfen boş geçmeyiniz. */
-    public pleasedonotempty = new LocalizationItem("Lütfen boş geçmeyiniz.");
+    public empty = ():LocalizationItem => new LocalizationItem("Lütfen boş geçmeyiniz.");
     /** İçerik {value} karakteri aşmamalıdır. */
-    public maxChar=new LocalizationItem("İçerik {value} karakteri aşmamalıdır.");
+    public max= ():LocalizationItem => new LocalizationItem("İçerik {value} karakteri aşmamalıdır.");
     /** Lütfen geçerli e-posta adresi giriniz */
-    public emailNotFormat = new LocalizationItem("Lütfen geçerli e-posta adresi giriniz. ");
+    public emailNotFormat = ():LocalizationItem => new LocalizationItem("Lütfen geçerli e-posta adresi giriniz. ");
     /** Kullanıcı bilgileri yanlış olabilir, lütfen tekrar deneyin */
-    public errorUserAndPassword = new LocalizationItem("Kullanıcı bilgileri yanlış olabilir, lütfen tekrar deneyin.")
+    public errorUserAndPassword = ():LocalizationItem => new LocalizationItem("Kullanıcı bilgileri yanlış olabilir, lütfen tekrar deneyin.")
+    /** Uygun bir say aralığı {value} giriniz ! */
+    public min = ():LocalizationItem => new LocalizationItem("Uygun bir say aralığı {value} giriniz !");
     
 }
 
 class LocalizationItem{
-    private Test:string;
+    private Text:string;
 
     constructor(text:string){
-        this.Test = text;
+        this.Text = text;
     }
 
     public Get = ():string=>{
-        return this.Test;
+        
+        const newTest = this.Text.replace("{value}","");
+        return newTest;
     }
 
     /**
@@ -31,7 +31,7 @@ class LocalizationItem{
      * @returns 
      */
     public AddValue = (value:string):LocalizationItem => {
-        this.Test = this.Test.replace("{value}",value);
+        this.Text = this.Text.replace("{value}",value);
         return this;
         
     }
@@ -43,7 +43,7 @@ class LocalizationItem{
      * @returns 
      */
     public AddField = (field:string):LocalizationItem => {
-        this.Test = this.Test.replace("{field}",field);
+        this.Text = this.Text.replace("{field}",field);
         return this;
     }
 }

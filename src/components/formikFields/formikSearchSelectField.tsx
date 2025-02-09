@@ -2,6 +2,7 @@ import { Autocomplete,TextField } from "@mui/material";
 import { useField } from "formik";
 import { Field } from "formik";
 import { useEffect } from "react";
+import { ErrorMessage } from "formik";
 
 interface FormikSearchSelectProp{
     name:string;
@@ -28,7 +29,9 @@ export const FormikSearchSelectField = (props:FormikSearchSelectProp):JSX.Elemen
     return (
         <>
             <Field {...field} {...restoreProps} hidden></Field>
+            <label>{props.label}</label>
             <Autocomplete
+                size="small"
                 disablePortal
                 value={currentData}
                 options={props.options ? props.options : new Array<any>}
@@ -40,8 +43,9 @@ export const FormikSearchSelectField = (props:FormikSearchSelectProp):JSX.Elemen
                     }
                 }}
                 
-                renderInput={(params) => <TextField {...params} label={props.label} />}
+                renderInput={(params) => <TextField {...params} />}
              />
+             <ErrorMessage name={props.name} component="span" className="text-danger" ></ErrorMessage>
         </>
     );
 }

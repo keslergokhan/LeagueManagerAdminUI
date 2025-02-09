@@ -64,7 +64,7 @@ export class ToastHelper{
     }
 
     static DefaultError = ():void =>{
-      ToastHelper.Error(<>An unexpected problem occurred !</>);
+      ToastHelper.Error(<>Beklenmedik teknik bir problem yaşandı !</>);
     };
 
     static Error = (content:JSX.Element):void =>{

@@ -1,24 +1,13 @@
 import { ReadDtoBase } from "../../base/readDtoBase";
-import { ReadCityDto } from "../cities/readCityDto";
-import { ReadDistrictDto } from "../districts/readDistrictDto";
 import { ReadTeamDto } from "../teams/readTeamDto";
+import { ReadPlayerInfo } from "./readPlayerInfoDto";
 
 export interface ReadPlayerDto extends ReadDtoBase{
     name:string;
     surname:string;
-    address:string;
-    position:number;
-    height:string;
-    kilogram:number;
-    birthDate:Date;
-    formNumber:number;
-    playerProfileImage:string;
+    password:string;
+    eposta:string;
     teamID:string;
     team:ReadTeamDto;
-    isCaptain:boolean;
-    isReplacement:boolean;
-    city:ReadCityDto;
-    cityID:string;
-    districtID:string;
-    district:ReadDistrictDto;
+    playerInfo:ReadPlayerInfo
 }

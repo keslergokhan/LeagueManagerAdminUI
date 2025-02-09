@@ -1,6 +1,7 @@
 import { Field } from "formik";
 import { useField } from "formik";
 import { useEffect } from "react";
+import { ErrorMessage } from "formik";
 
 interface FormikYesNoSelectFieldProp{
     id:string;
@@ -38,6 +39,7 @@ export const FormikYesNoSelectField = (props:FormikYesNoSelectFieldProp):JSX.Ele
                 <option value="false">Hayır</option>
                 <option value="true">Evet</option>
             </select>
+            <ErrorMessage name={props.name} component="span" className="text-danger" ></ErrorMessage>
         </>
     );
 }

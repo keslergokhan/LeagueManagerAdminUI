@@ -5,6 +5,7 @@ import { ResultDataControl } from "../../commons/results/resultControl";
 import { ServiceBase } from "./serviceBase";
 import axios from "axios"
 import { ReadPlayerDto } from "../../entities/dtos/players/readPlayerDto";
+import { SearchSelectItem } from "../../models/shareds/searchSelectItem";
 
 
 export abstract class GenericServiceBase<TRequest extends WriteDtoBase,TResponse extends ReadDtoBase> extends ServiceBase{
@@ -82,5 +83,21 @@ export abstract class GenericServiceBase<TRequest extends WriteDtoBase,TResponse
         return result;
     }
 
+    
+    public GetSelectDataAsync = async <TKey extends string & keyof TResponse>(key:TKey):Promise<IResultDataControl<Array<SearchSelectItem<string>>>> => {
+        
+        const result = new ResultDataControl<Array<SearchSelectItem<string>>>();
+
+        await this.GetAllAsync().then(x=>{
+            if(x.isSuccess){
+                const searchData = x.data.map(data=>{
+                    return new SearchSelectItem(data[key] as string,data.id);
+                })
+                result.SetSuccessData(searchData);
+            }
+        })
+
+        return result;
+    }
 
 }

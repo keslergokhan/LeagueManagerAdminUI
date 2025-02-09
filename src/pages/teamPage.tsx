@@ -25,7 +25,7 @@ export const TeamPage = ():JSX.Element=>{
         InitialValues : EMTPY_TEAM,
         UseStateData:TEAM,
         ValidationSchema : Yup.object({
-            name:Yup.string().required(Lclztn.pleasedonotempty.Get())
+            name:Yup.string().required(Lclztn.empty().Get())
         }),
         TableHeadHtml:(
             <>

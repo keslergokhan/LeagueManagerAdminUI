@@ -37,7 +37,7 @@ export const SignInLayer = ():JSX.Element => {
             navigate(PageRoutes.Home.Path);
         }else{
             setUseAlertProp({
-                message:Lclztn.errorUserAndPassword.Get(),
+                message:Lclztn.errorUserAndPassword().Get(),
                 alertState :AlertState.error
             });
         }
@@ -48,13 +48,13 @@ export const SignInLayer = ():JSX.Element => {
     
     const validationSchema = Yup.object({
         email:Yup.string()
-        .required(Lclztn.pleasedonotempty.Get())
-        .max(50,Lclztn.maxChar.AddValue("50").Get())
-        .email(Lclztn.emailNotFormat.Get()),
+        .required(Lclztn.empty().Get())
+        .max(50,Lclztn.max().AddValue("50").Get())
+        .email(Lclztn.emailNotFormat().Get()),
         
         password:Yup.string()
-        .required(Lclztn.pleasedonotempty.Get())
-        .max(50,Lclztn.maxChar.AddValue("50").Get())
+        .required(Lclztn.empty().Get())
+        .max(50,Lclztn.max().AddValue("50").Get())
     });
 
     /** password input gizle göster */

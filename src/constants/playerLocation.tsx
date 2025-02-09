@@ -4,6 +4,7 @@ interface PlayerPosition{
 }
 
 export const PlayerPosition = new Array<PlayerPosition>(
+    {value:0,key:"Boş"},
     {value:1,key:"Kaleci"},
     {value:2,key:"Defans"},
     {value:3,key:"Orta Saha"},

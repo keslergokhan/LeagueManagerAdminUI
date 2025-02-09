@@ -29,9 +29,9 @@ export const BlogPage = ():JSX.Element=>{
     {
         InitialValues:emptyData,
         ValidationSchema : Yup.object({
-            title:Yup.string().required(Lclztn.pleasedonotempty.Get()),
-            content:Yup.string().required(Lclztn.pleasedonotempty.Get()),
-            blogDate:Yup.string().required(Lclztn.pleasedonotempty.Get())
+            title:Yup.string().required(Lclztn.empty().Get()),
+            content:Yup.string().required(Lclztn.empty().Get()),
+            blogDate:Yup.string().required(Lclztn.empty().Get())
         }),
         UseStateData:blogValue,
         AddFormHtml:()=>{
