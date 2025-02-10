@@ -10,23 +10,18 @@ export interface LoadingLayoutProps{
 
 export const LoadingLayout = (props:LoadingLayoutProps):JSX.Element =>{
     return (<>
-        {
-            props.isLoading ? 
-            <>
+        <DefaultLayout>
+            
+            {(props.isLoading ?
                 <Stack sx={{width:"100%",padding:"0px",margin:"0px"}} direction="column" alignContent="center" alignItems="center" justifyContent="center">
                     <Typography>Yükleniyor ...</Typography>
                     <Box  sx={{ display: 'flex', margin:"0px",padding:"0px",justifyContent: 'center', alignItems: 'center', height: '300px' }}>
                         <Icon icon="svg-spinners:ring-resize" width="75" height="75" style={{color:"dark"}} />
                     </Box>
                 </Stack>
-            </>
-            :
-            <>
-                <DefaultLayout>
-                    {props.children}
-                </DefaultLayout>
-            </>
-        }
-        
+                :
+                props.children
+            )}
+        </DefaultLayout>
     </>);
 }
