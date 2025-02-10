@@ -44,12 +44,12 @@ export class AppBaseContextPropsService implements AppBaseContextProps {
     }
     public SetBreadCrumbs = (item:BreadCrumbItem | null,isClear:boolean):void=>{
         if(item!=null){
-            
+            this.GetLocalStorage();
             if(isClear){
                 this.breadCrumbs.splice(0,this.breadCrumbs.length);
                 this.breadCrumbs.push(item);
             }else{
-                if(this.breadCrumbs.filter(x=>x.path == item.path).length==0){
+                if(this.breadCrumbs.filter(x=>x.title == item.title).length==0){
                     this.breadCrumbs.push(item);
                 }
             }

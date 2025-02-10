@@ -2,10 +2,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import { PageRoutes } from "../constants/pageRoute";
 import { LeagueService } from "../services/leagueService";
 import { ToastHelper } from "../commons/helpers/toastHelpers";
-import { DefaultLayout } from "../layouts/defaultLayout";
 import { ReadLeagueDto } from "../entities/dtos/leagues/readLeagueDto";
 import { useLayoutEffect,useState } from "react";
 import { useAppContext } from "../hooks/useAppContext";
+import { LoadingLayout } from "../layouts/loadingLayout";
 
 export const SeasonPage = ():JSX.Element => {
 
@@ -28,7 +28,7 @@ export const SeasonPage = ():JSX.Element => {
         leagueService.Get(id).then(x=>{
             if(x.isSuccess && x.data!=null){
                 League=x.data;
-                appContext.SetArrayBreadCrumbs([{title:League.name,path:""},{title:PageRoutes.Season.Title,path:PageRoutes.Season.Path}],false);
+                appContext.SetArrayBreadCrumbs([{title:PageRoutes.Season.Title},{title:League.name}],false);
                 setLoadingState(false);
             }else{
                 ToastHelper.DefaultError();
@@ -40,16 +40,9 @@ export const SeasonPage = ():JSX.Element => {
     },[id]);
 
 
-    return (<>
-        {
-            isLoading ? <>Yükleniyor</>
-            :
-            <>
-                <DefaultLayout>
-                    Sezonlar
-                </DefaultLayout>
-            </>
-        }
-        
-    </>);
+    return (
+        <LoadingLayout isLoading={isLoading}>
+            <>deneme</>
+        </LoadingLayout>
+    );
 }

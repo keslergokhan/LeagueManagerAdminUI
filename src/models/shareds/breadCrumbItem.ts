@@ -1,4 +1,4 @@
 export interface BreadCrumbItem{
     title:string;
-    path:string;
+    path?:string;
 }
