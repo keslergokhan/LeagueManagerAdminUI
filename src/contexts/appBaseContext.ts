@@ -3,6 +3,7 @@ import { BreadCrumbItem } from "../models/shareds/breadCrumbItem";
 
 export interface AppBaseContextProps {
     SetBreadCrumbs:(item:BreadCrumbItem,isClear:boolean)=>void;
+    SetArrayBreadCrumbs:(items:Array<BreadCrumbItem>,isClear:boolean)=>void;
     BreadCrumbs:()=>Array<BreadCrumbItem>;
 }
 
@@ -13,6 +14,8 @@ export class AppBaseContextPropsService implements AppBaseContextProps {
     constructor() {
         this.breadCrumbs = new Array<BreadCrumbItem>();
     }
+
+    public SetLoading: (state:boolean)=>void;
 
     public BreadCrumbs=()=>{
         return this.GetLocalStorage();
@@ -34,6 +37,11 @@ export class AppBaseContextPropsService implements AppBaseContextProps {
     }
 
    
+    public SetArrayBreadCrumbs = (items: Array<BreadCrumbItem>, isClear: boolean) => {
+        items.forEach(x=>{
+            this.SetBreadCrumbs(x,isClear);
+        })
+    }
     public SetBreadCrumbs = (item:BreadCrumbItem | null,isClear:boolean):void=>{
         if(item!=null){
             
@@ -50,5 +58,5 @@ export class AppBaseContextPropsService implements AppBaseContextProps {
     }
 }
 
-export const AppBaseContext = createContext<AppBaseContextProps | null>(null);
+export const AppBaseContext = createContext<AppBaseContextProps>(new AppBaseContextPropsService());
 

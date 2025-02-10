@@ -15,9 +15,15 @@ export const useSetBreadCrumb2 = (item:PageRoute,isClear:boolean) =>{
     context?.SetBreadCrumbs({title:item.Title,path:item.Path},isClear);
 }
 
+export const useSetArrayBreadCrumb = (items:Array<BreadCrumbItem>,isClear:boolean) =>{
+
+    const context = useContext(AppBaseContext);
+    context?.SetArrayBreadCrumbs(items,isClear);
+}
+
 
 export const useBreadCrumb = ():Array<BreadCrumbItem>|null =>{
 
     const context = useContext(AppBaseContext);
-    return context?.BreadCrumbs() ? context?.BreadCrumbs():null;
+    return context.BreadCrumbs();
 }

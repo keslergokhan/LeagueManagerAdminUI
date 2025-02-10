@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DynamicTable, DynamicTableProp } from "../components/dynamicComponents/dynamicTable";
 import * as Yup from 'yup'
 import { Lclztn } from "../constants/localization";
@@ -12,10 +12,12 @@ import {Button} from "@mui/material";
 import { ReadSeasonDto } from "../entities/dtos/seasons/readSeasonDto";
 import { useNavigate } from "react-router-dom";
 import { PageRoutes } from "../constants/pageRoute";
-import { useBreadCrumb, useSetBreadCrumb2 } from "../hooks/useBranchCrumb";
+import { useSetBreadCrumb2 } from "../hooks/useBranchCrumb";
+import { useAppContext } from "../hooks/useAppContext";
 
 export const LeaguePage = ():JSX.Element=>{
-    
+
+    const appContext = useAppContext();
     useSetBreadCrumb2(PageRoutes.League,true);
     const navigate= useNavigate();
     const teamService = new LeagueService();
