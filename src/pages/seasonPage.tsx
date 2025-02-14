@@ -7,7 +7,7 @@ import { useEffect, useLayoutEffect,useState } from "react";
 import { useAppContext } from "../hooks/useAppContext";
 import { LoadingLayout } from "../layouts/loadingLayout";
 import { CmsCardBody } from "../components/shareds/cmsCardBody";
-import { SeasonFormComponent } from "../components/seasonComponents/seasonFormComponent";
+import { SeasonTableComponent } from "../components/seasonComponents/seasonTableComponent";
 import { Typography } from "@mui/material";
 
 export const SeasonPage = ():JSX.Element => {
@@ -29,10 +29,12 @@ export const SeasonPage = ():JSX.Element => {
 
     
     useEffect(()=>{
+       
         leagueService.Get(id).then(x=>{
             if(x.isSuccess && x.data!=null){                
                 setLeague(x.data);               
                 appContext.SetArrayBreadCrumbs([{title:PageRoutes.Season.Title},{title:x.data.name}],false);
+                
             }else{
                 ToastHelper.DefaultError();
                 setTimeout(() => {
@@ -43,14 +45,10 @@ export const SeasonPage = ():JSX.Element => {
         })
     },[id]);
 
-
-
     return (
         <LoadingLayout isLoading={isLoading}>
             <Typography variant="h6" textAlign={"end"} > {League.name} Sezonları</Typography>
-            <CmsCardBody xlCol={12} xxlCol={12}>
-                <SeasonFormComponent league={League} ></SeasonFormComponent>
-            </CmsCardBody>
+            <SeasonTableComponent league={League}></SeasonTableComponent>
         </LoadingLayout>
     );
 }

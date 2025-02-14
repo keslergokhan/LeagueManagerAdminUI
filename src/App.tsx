@@ -11,7 +11,7 @@ import { PlayerPage } from './pages/playerPage'
 import { LeaguePage } from './pages/leaguePage'
 import { AppBaseContext } from './contexts/appBaseContext'
 import { AppBaseContextPropsService } from './contexts/appBaseContext'
-import { useState } from 'react'
+import { TESTT } from './pages/testPage'
 
 
 function App() {
@@ -31,6 +31,7 @@ function App() {
               <Route path='/team' element={<TeamPage></TeamPage>}></Route>
               <Route path="/player" element={<PlayerPage></PlayerPage>}></Route>
               <Route path='/league' element={<LeaguePage></LeaguePage>}></Route>
+              <Route path="/test" element={<TESTT></TESTT>}></Route>
             </Routes>
             <ToastContainer></ToastContainer>
           </BrowserRouter>

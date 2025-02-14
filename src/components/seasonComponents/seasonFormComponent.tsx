@@ -1,62 +1,89 @@
-import { useState } from "react";
-import { ReadLeagueDto } from "../../entities/dtos/leagues/readLeagueDto";
-import { TableContainer,Table,TableCell,TableRow,TableHead,TableBody} from "@mui/material";
+import { Stack,Button } from "@mui/material";
+import { Formik,Form } from "formik";
+import { Field } from "formik";
+import { ErrorMessage } from "formik";
+import * as Yup from 'yup'
+import { Lclztn } from "../../constants/localization";
+import { FormikDateField } from "../formikFields/formikDateField";
+import { WriteSeasonDto } from "../../entities/dtos/seasons/writeSeasonDto";
 import { SeasonService } from "../../services/seasonService";
 import { ToastHelper } from "../../commons/helpers/toastHelpers";
-import { ReadSeasonDto } from "../../entities/dtos/seasons/readSeasonDto";
+import { ReadLeagueDto } from "../../entities/dtos/leagues/readLeagueDto";
+import { StringHelper } from "../../commons/helpers/stringHelpers";
 
 export interface SeasonFormComponentProps {
-    league:ReadLeagueDto
+    dispatch:React.Dispatch<"addFromShow"|"addFromCencel">;
+    league:ReadLeagueDto,
+    tableRefresh:()=>void
 }
 
 export const SeasonFormComponent = (props:SeasonFormComponentProps):JSX.Element =>{
 
     const seasonService = new SeasonService();
-    const [seasonList,setSeasonList] = useState<Array<ReadSeasonDto>>();
+    
+    const seasonAddFormInitialValiues:WriteSeasonDto = {
+        name:"",
+        startDate:new Date(),
+        endDate:new Date(),
+        isFinish:false,
+        leagueID:props.league.id,
+        state:0
+    };
 
-    seasonService.GetAllSeasonByLeagueID(props.league.id).then(x=>{
-        setSeasonList(x.data);
-    }).catch(x=>{
-        console.log(x);
-        ToastHelper.DefaultError();
+    const validationSchema = Yup.object({
+        name:Yup.string().required(Lclztn.empty().Get()).max(75,Lclztn.max().Get()),
+        startDate:Yup.string().required(Lclztn.empty().Get()),
+        endDate:Yup.string().required(Lclztn.empty().Get()),
+        leagueID:Yup.string().required()
     })
 
-    const Row = (data:ReadSeasonDto,i:number):JSX.Element => {
-        return (
-            <TableRow key={i}>
-                <TableCell>1</TableCell>
-                <TableCell align="right">{data.name}</TableCell>
-            </TableRow>
-        );
-    }
-
-    const Body = ():JSX.Element =>{
-        return (
-            <>
-                {seasonList?.map((x,i)=>{
-                    return Row(x,i);
-                })}
-            </>
-        );
+    const formSubmitHandlerAsync = async (values:WriteSeasonDto) =>{
+        console.log(values);
+        await seasonService.AddAsync(values).then(x=>{
+            if(!x.isSuccess){
+                throw new Error();
+            }
+            props.tableRefresh();
+            props.dispatch("addFromCencel");
+            ToastHelper.Success(<>Yeni sezon başarıyla eklendi.</>);
+        }).catch(x=>{
+            console.log(x);
+            ToastHelper.DefaultError();
+        });
     }
 
     return (
         <>
-            <TableContainer>
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>ADET</TableCell>
-                            <TableCell align="right">BAŞLIK</TableCell>
-                        </TableRow>
-                    </TableHead>
-                
-                    <TableBody>
-                        <Body></Body>
-                    </TableBody>
+            <Formik 
+                initialValues={seasonAddFormInitialValiues}
+                validationSchema={validationSchema}
+                onSubmit={async (values:WriteSeasonDto)=>{await formSubmitHandlerAsync(values)}}>
 
-                </Table>
-            </TableContainer>
+                <Form>
+                    <Stack spacing={2} direction={"row"}>
+                        <Field name="leagueID" id="leagueID" value={props.league.id} hidden></Field>
+                        <div>
+                            <label>Lig Adı</label>
+                            <Field className="form-control" tpye="text" id="name" name="name" ></Field>
+                            <ErrorMessage name="name" component="span" className="text-danger" ></ErrorMessage>
+                        </div>
+                        <div>
+                            <label>Lig Başlangıç</label>
+                            <FormikDateField name="startDate" id="startDate" data={StringHelper.GetTodayDate()}></FormikDateField>
+                        </div>
+                        <div>
+                            <label>Lig Bitiş</label>
+                            <FormikDateField name="endDate" id="endDate" data={StringHelper.GetTodayDate()}></FormikDateField>
+                        </div>
+                    </Stack>
+
+                    <Stack direction="row" spacing={2} sx={{marginTop:"10px"}} justifyContent="flex-end">
+                        <Button variant="contained" type="submit" size="small" color="success" onClick={()=>{}} >Kaydet</Button>
+                        <Button variant="contained" size="small" color="error" onClick={()=>{props.dispatch("addFromCencel")}} >İptal</Button>
+                    </Stack>
+                </Form>
+                    
+            </Formik>
         </>
     );
 }

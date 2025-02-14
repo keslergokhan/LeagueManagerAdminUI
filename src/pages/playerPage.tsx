@@ -91,6 +91,7 @@ export const PlayerPage = ():JSX.Element=>{
    
     const dynamicTableProp:DynamicTableProp<WritePlayerDto,ReadPlayerDto> = {
         Title:"Takımlar",
+        formDeleteOnOff:true,
         InitialValues : EMTPY_TEAM,
         UseStateData:TEAM,
         ValidationSchema : Yup.object({
@@ -143,8 +144,7 @@ export const PlayerPage = ():JSX.Element=>{
         },
         GetDataServiceAsync:service.GetAllAsync,
         AddFormSubmitHandlerAsync:async (data:WritePlayerDto)=>{
-            console.log(data);
-            await service.AddAsync(data);
+            return await service.AddAsync(data);
         },
         AddFormHtml:()=>{
             
