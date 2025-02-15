@@ -4,6 +4,6 @@ export interface WriteSeasonDto extends WriteDtoBase{
     name:string;
     startDate:Date;
     endDate:Date; 
-    isFinish:boolean;
+    isFinish:Boolean;
     leagueID:string;
 }

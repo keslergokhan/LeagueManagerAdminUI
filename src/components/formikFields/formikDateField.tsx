@@ -13,8 +13,19 @@ export const FormikDateField = (props:FormikDateFieldProp):JSX.Element =>{
     const [field,meta,helper] = useField(props);
 
     useEffect(()=>{
+        if(field.value){
+            if(typeof(field.value) == "object"){
+                if(new Date(field.value).toLocaleDateString().indexOf('T') != -1){
+                    helper.setValue(new Date(field.value).toLocaleDateString().split('T')[0])
+                }
+            }else{
+                helper.setValue(field.value.toString().split('T')[0])
+            }
+            
+        }
+        
         if(props.data){
-            helper.setValue(props.data);
+            helper.setValue(props.data.toString().split('T')[0]);
         }
     },[]);
 

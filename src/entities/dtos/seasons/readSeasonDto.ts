@@ -4,4 +4,5 @@ export interface ReadSeasonDto extends ReadDtoBase {
     name:string;
     startDate:Date;
     endDate:Date;
+    isFinish:Boolean
 }

@@ -10,14 +10,15 @@ import { SeasonService } from "../../services/seasonService";
 import { ToastHelper } from "../../commons/helpers/toastHelpers";
 import { ReadLeagueDto } from "../../entities/dtos/leagues/readLeagueDto";
 import { StringHelper } from "../../commons/helpers/stringHelpers";
+import { SeasonFormAction } from "./seasonTableComponent";
 
-export interface SeasonFormComponentProps {
-    dispatch:React.Dispatch<"addFromShow"|"addFromCencel">;
+export interface SeasonFormProps {
+    dispatch:React.Dispatch<SeasonFormAction>;
     league:ReadLeagueDto,
     tableRefresh:()=>void
 }
 
-export const SeasonFormComponent = (props:SeasonFormComponentProps):JSX.Element =>{
+export const SeasonAddForm = (props:SeasonFormProps):JSX.Element =>{
 
     const seasonService = new SeasonService();
     
@@ -44,7 +45,7 @@ export const SeasonFormComponent = (props:SeasonFormComponentProps):JSX.Element 
                 throw new Error();
             }
             props.tableRefresh();
-            props.dispatch("addFromCencel");
+            props.dispatch({type:"ADD_FORM_CENCEL"});
             ToastHelper.Success(<>Yeni sezon başarıyla eklendi.</>);
         }).catch(x=>{
             console.log(x);
@@ -79,7 +80,7 @@ export const SeasonFormComponent = (props:SeasonFormComponentProps):JSX.Element 
 
                     <Stack direction="row" spacing={2} sx={{marginTop:"10px"}} justifyContent="flex-end">
                         <Button variant="contained" type="submit" size="small" color="success" onClick={()=>{}} >Kaydet</Button>
-                        <Button variant="contained" size="small" color="error" onClick={()=>{props.dispatch("addFromCencel")}} >İptal</Button>
+                        <Button variant="contained" size="small" color="error" onClick={()=>{props.dispatch({type:"ADD_FORM_CENCEL"})}} >İptal</Button>
                     </Stack>
                 </Form>
                     
