@@ -11,10 +11,11 @@ export interface ReadPlayerInfo{
     formNumber:number;
     playerProfileImage:string;
     isCaptain:boolean;
+    age:number;
     powerFoot:number;
     socialMediaJSON:string;
     districtID:string;
     cityID:string;
     city:ReadCityDto
-    distirct:ReadDistrictDto
+    district:ReadDistrictDto
 }

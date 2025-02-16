@@ -1,4 +1,5 @@
 import { ReadDtoBase } from "../../base/readDtoBase";
+import { ReadPlayerTeamDto } from "../playerTeams/readPlayerTeamDto";
 import { ReadTeamDto } from "../teams/readTeamDto";
 import { ReadPlayerInfo } from "./readPlayerInfoDto";
 
@@ -7,7 +8,6 @@ export interface ReadPlayerDto extends ReadDtoBase{
     surname:string;
     password:string;
     eposta:string;
-    teamID:string;
-    team:ReadTeamDto;
-    playerInfo:ReadPlayerInfo
+    playerInfo:ReadPlayerInfo;
+    playerTeams:Array<ReadPlayerTeamDto>
 }

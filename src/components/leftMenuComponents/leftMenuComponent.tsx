@@ -178,6 +178,14 @@ export const LeftMenuComponent = () => {
                 <span>Lig</span>
               </NavLink>
             </li>
+            <li>
+              <NavLink to="/player" className={(navData) =>
+                navData.isActive ? "active-page" : ""
+              }>
+                <Icon icon="hugeicons:user-group" className="menu-icon" />
+                <span>Oyuncular</span>
+              </NavLink>
+            </li>
             
           </ul>
         </div>

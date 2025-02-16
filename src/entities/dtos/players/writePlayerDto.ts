@@ -1,7 +1,5 @@
 import { WriteDtoBase } from "../../base/writeDtoBase";
-import { WriteCityDto } from "../cities/writeCityDto";
-import { WriteDistrictDto } from "../districts/writeDistrictDto";
-import { WriteTeamDto } from "../teams/writeTeamDto";
+import { WritePlayerTeamDto } from "../playerTeams/writePlayerTeamDto";
 import { WritePlayerInfoDto } from "./writePlayerInfoDto";
 
 export interface WritePlayerDto extends WriteDtoBase{
@@ -9,7 +7,6 @@ export interface WritePlayerDto extends WriteDtoBase{
     surname:string;
     eposta:string;
     password:string;
-    teamID:string;
-    team:WriteTeamDto;
-    playerInfo:WritePlayerInfoDto
+    playerInfo:WritePlayerInfoDto;
+    playerTeams:Array<WritePlayerTeamDto>
 }

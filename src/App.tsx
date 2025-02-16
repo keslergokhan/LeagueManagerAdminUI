@@ -7,10 +7,10 @@ import { ToastContainer } from 'react-toastify'
 import { SeasonPage } from './pages/seasonPage'
 import "react-toastify/dist/ReactToastify.css";
 import { TeamPage } from './pages/teamPage'
-import { PlayerPage } from './pages/playerPage'
 import { LeaguePage } from './pages/leaguePage'
 import { AppBaseContext } from './contexts/appBaseContext'
 import { AppBaseContextPropsService } from './contexts/appBaseContext'
+import { PlayerPage } from './pages/playerPage'
 import { TESTT } from './pages/testPage'
 
 
